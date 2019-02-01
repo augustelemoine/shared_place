@@ -74,7 +74,7 @@ export default {
 				item_code: this.item,
 				qty: this.qty,
 				callback: function(r) {
-					if ('room' in me.resource) {
+					if ('room' in me.resource && me.resource.room !== null) {
 						erpnext.shopping_cart.update_cart({
 							item_code: me.resource.room_item,
 							qty: me.qty,

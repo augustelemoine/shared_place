@@ -92,7 +92,7 @@
 			},
 			showBookingDialog(event) {
 				let res = this.resources.filter((e) => { return e.id===event.resourceId})[0]
-				if ('room' in res) {
+				if ('room' in res && res.room !== null) {
 					let correspondingRoom = this.resources.filter((e) => { return e.id===res.room})[0]
 					res['room_item'] = correspondingRoom.item
 				}

@@ -41,7 +41,7 @@ def check_availabilities(start, end):
 	linked_resource = False
 
 	for resource in resources:
-		if 'room' in resource:
+		if 'room' in resource and resource['room'] is not None:
 			linked_resource = True
 			original_resource = resource.copy()
 			resource = frappe.db.get_values("Shared Place Room", resource['room'], ['name as id', 'room_name as title', 'item'], as_dict=True)[0]
@@ -211,7 +211,7 @@ def book_slot(doctype, resource, start, end):
 		"quotation": quotation.name
 	}).insert()
 
-	if 'room' in resource:
+	if 'room' in resource and resource['room'] is not None:
 
 		room_booking = frappe.get_doc({
 			"doctype": "Shared Place Booking",
