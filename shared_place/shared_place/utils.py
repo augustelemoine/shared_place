@@ -48,8 +48,9 @@ def shared_place_order():
 			for booking in bookings:
 				doc = frappe.get_doc("Shared Place Booking", booking.name)
 				doc.sales_order = sales_order
-				doc.save(ignore_permissions=True)
-				doc.submit(ignore_permissions=True)
+				doc.flags.ignore_permissions=True
+				doc.save()
+				doc.submit()
 
 	return sales_order
 
