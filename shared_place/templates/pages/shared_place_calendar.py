@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2019, DOKOS and Contributors
 # License: GNU General Public License v3. See license.txt
 
@@ -177,8 +178,8 @@ def get_all_slots(day_start, day_end, time_delta, scheduled_items=None):
 
 def get_dict(start, end, slots=None):
 	return {
-		"start": start.isoformat('T'), 
-		"end": end.isoformat('T'), 
+		"start": start.isoformat(), 
+		"end": end.isoformat(), 
 		"title": "{0}-{1}".format(format_datetime(start, "HH:mm"), format_datetime(end, "HH:mm"))
 	}
 
