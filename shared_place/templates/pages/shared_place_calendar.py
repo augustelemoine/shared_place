@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2019, DOKOS and Contributors
 # License: GNU General Public License v3. See license.txt
 
@@ -23,6 +22,10 @@ def get_rooms_and_resources():
 	if resources:
 		result.extend(resources)
 	return result
+
+@frappe.whitelist(allow_guest=True)
+def get_settings():
+	return frappe.db.get_values("Shared Place Settings", None, ["calendar_start_time", "calendar_end_time", "minimum_booking_time_mins", "week_end_bookings"], as_dict=True)
 
 def daterange(start_date, end_date):
 	if start_date < now_datetime():

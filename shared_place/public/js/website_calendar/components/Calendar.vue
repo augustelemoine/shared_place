@@ -93,8 +93,8 @@
 			showBookingDialog(event) {
 				let res = this.resources.filter((e) => { return e.id===event.resourceId})[0]
 				if ('room' in res) {
-					let correpondingRoom = this.resources.filter((e) => { return e.id===res.room})[0]
-					res['room_item'] = correpondingRoom.item
+					let correspondingRoom = this.resources.filter((e) => { return e.id===res.room})[0]
+					res['room_item'] = correspondingRoom.item
 				}
 				this.$modal.show('booking-dialog', {
 					date: moment(event.start).format('LL'),
@@ -107,12 +107,8 @@
 				})
 			},
 			getSettings() {
-				frappe.call({
-					method: 'frappe.client.get',
-					args: {
-						"doctype": "Shared Place Settings",
-						"name": "Shared Place Settings",
-					},
+				frappe.call({	
+					method: 'shared_place.templates.pages.shared_place_calendar.get_settings',
 					callback: (r) => {
 						this.$refs.calendar.fireMethod('option', 'minTime', r.message.calendar_start_time);
 						this.$refs.calendar.fireMethod('option', 'scrollTime', r.message.calendar_start_time);
