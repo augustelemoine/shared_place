@@ -1,0 +1,21 @@
+{% extends "templates/web.html" %}
+
+{% block head_include %}
+<link type="text/css" rel="stylesheet" href="/assets/shared_place/css/fullcalendar.min.css">
+<link type="text/css" rel="stylesheet" href="/assets/shared_place/css/scheduler.min.css">
+<link type="text/css" rel="stylesheet" href="/assets/shared_place/css/sharedplacecalendar.css">
+{% endblock %}
+
+{% block title %} {{ _("Calendar") }} {% endblock %}
+
+
+{% block header %}{% endblock %}
+
+
+{% block script %}
+<script type="text/javascript" src="/assets/js/shared-place-calendar.js"></script>
+{% endblock %}
+
+{% block page_content %}
+<div class="row" id="mainview"></div>
+{% endblock %}

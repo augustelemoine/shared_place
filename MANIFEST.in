@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include shared_place *.css
+recursive-include shared_place *.csv
+recursive-include shared_place *.html
+recursive-include shared_place *.ico
+recursive-include shared_place *.js
+recursive-include shared_place *.json
+recursive-include shared_place *.md
+recursive-include shared_place *.png
+recursive-include shared_place *.py
+recursive-include shared_place *.svg
+recursive-include shared_place *.txt
+recursive-exclude shared_place *.pyc
