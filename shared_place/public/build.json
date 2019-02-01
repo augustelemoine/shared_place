@@ -1,5 +1,6 @@
 {
 	"js/shared_place.js": [
+		"public/js/event_emitter.js",
 		"public/js/shared_place.js"
 	],
 	"js/shared-place-calendar.js": [

@@ -29,9 +29,9 @@ const EventEmitterMixin = {
 	}
 }
 
-shared_place.utils.make_event_emitter = function(object) {
-	Object.assign(object, EventEmitterMixin);
-	return object;
-};
-
-export default EventEmitterMixin;
+$.extend(shared_place.utils, {
+	make_event_emitter: function(object) {
+		Object.assign(object, EventEmitterMixin);
+		return object;
+	}
+});
