@@ -4,7 +4,8 @@ frappe.views.calendar["Shared Place Booking"] = {
 		"end": "ends_on",
 		"id": "name",
 		"title": "title",
-		"color": "color"
+		"color": "color",
+		"allDay": "allDay"
 	},
 	gantt: false,
 	get_events_method: "shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_events",
