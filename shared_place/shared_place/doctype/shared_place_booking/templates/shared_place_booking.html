@@ -1,0 +1,40 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ doc.title }}{% endblock %}
+
+{% block header %}
+<h1>{{ doc.title }}</h1>
+{% endblock %}
+
+{% block page_content %}
+<div class="row transaction-subheading">
+	<div class="col-xs-6" id="appointment-status">
+		<span class="indicator {{ "red " if doc.docstatus==2 else "blue " if doc.ends_on < frappe.utils.now_datetime() else "green " if doc.docstatus==1 }}">
+			{{ _("Cancelled") if doc.docstatus==2 else _("Past") if doc.ends_on < frappe.utils.now_datetime() else _("Planned") if doc.docstatus==1 }}
+		</span>
+	</div>
+	<div class="col-xs-6 text-muted text-right small">
+		<div>
+			{{ frappe.format_date(doc.starts_on, "medium") }}
+		</div>
+		<div>
+			{{ frappe.utils.format_datetime(doc.starts_on, "HH:mm") }} - {{ frappe.utils.format_datetime(doc.ends_on, "HH:mm") }}
+		</div>
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="clearfix">
+			<div>
+				<h4><span class="text-muted">{{ _("Booking Type") }}</span>: <span>{{ doc.booking_type }}</span></h4>
+			</div>
+		</div>
+		<div class="clearfix">
+			<div>
+				<h4><span class="text-muted">{{ _("Booked Resource") }}</span>: <span>{{ doc.booked_resource }}</span></h4>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

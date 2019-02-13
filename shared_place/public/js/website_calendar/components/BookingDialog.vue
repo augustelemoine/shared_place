@@ -4,12 +4,10 @@
 		<div>
 			<div class="bookpage-section">
 				<h2 class="bookpage-date">{{ date }}</h2>
-				<h3 class="bookpage-time">{{ start_time | moment }} - {{ end_time | moment }}</h3>
+				<h3 class="bookpage-resource">{{ resource.title }}</h3>
 			</div>
 			<div class="bookpage-section">
-				<h2 class="bookpage-resource">{{ resource.title }}</h2>
-			</div>
-			<div class="bookpage-section">
+				<span class="blue">{{ __("Add or remove an hour") }}</span>
 				<div class="input-group number-spinner">
 					<span class="input-group-btn">
 						<button class="btn btn-default cart-btn" @click="removeQty">–</button>
@@ -19,8 +17,12 @@
 						<button class="btn btn-default cart-btn" @click="addQty">+</button>
 					</span>
 				</div>
+				<h2 class="bookpage-time">{{ start_time | moment }} - {{ end_time | moment }}</h2>
 			</div>
-			<div class="bookpage-section bookpage-footer">
+			<div class="bookpage-section">
+				<h3 class="bookpage-price green">{{ price }}</h3>
+			</div>
+			<div class="bookpage-section">
 				<button class="btn bookpage-btn" @click="$modal.hide('booking-dialog')">{{ __("Close") }}</button>
 				<button class="btn btn-primary bookpage-btn" @click="addToCart">{{ __("Add to cart") }}</button>
 			</div>
@@ -34,6 +36,7 @@ import moment from 'moment';
 
 export default {
 	name: 'BookingDialog',
+	props: ['booked'],
 	data () {
 		return {
 			date: null,
@@ -43,12 +46,14 @@ export default {
 			adaptive: true,
 			qty: 1,
 			events: [],
-			resource: {}
+			resource: {},
+			price: null
 		}
 	},
 	watch: {
 		qty: function(val) {
 			this.end_time = moment(this.start_time).add(val, 'hours');
+			this.getPrice();
 		} 
 	},
 	filters: {
@@ -66,9 +71,13 @@ export default {
 			this.item = event.params.item;
 			this.events = event.params.events;
 			this.qty = 1;
+			this.getPrice();
 		},
 		addToCart() {
 			const me = this;
+
+			this.booked[this.item] = (this.booked[this.item] || 0) + this.qty
+
 			frappe.provide('erpnext.shopping_cart');
 			erpnext.shopping_cart.update_cart({
 				item_code: this.item,
@@ -78,6 +87,7 @@ export default {
 						erpnext.shopping_cart.update_cart({
 							item_code: me.resource.room_item,
 							qty: me.qty,
+							hash: me.hash,
 							callback: function(r) {
 								me.$modal.hide('booking-dialog');
 							}
@@ -123,6 +133,19 @@ export default {
 					break;
 				}
 			}
+		},
+		getPrice() {
+			frappe.call({
+				method: "shared_place.templates.pages.shared_place_calendar.get_slot_price",
+				args: {
+					"item_code": this.resource.item,
+					"price_list": this.resource.price_list,
+					"qty": this.qty
+				},
+				callback: (r) => {
+					this.price = r.message;
+				}
+			});
 		}
 	}
 }
@@ -130,17 +153,13 @@ export default {
 
 <style>
 .bookpage-section {
-	min-height: 110px;
 	text-align: center;
 	font-weight: 400;
+	margin-bottom: 50px;
 }
 
 .bookpage-section .input-group {
 	margin: auto;
-}
-
-.bookpage-footer {
-	margin-top: 50px;
 }
 
 .bookpage-date {
@@ -158,7 +177,12 @@ export default {
 	text-align: center;
 	font-size: 17px;
 	margin-bottom: 15px;
-	margin-top: 10px;
+	margin-top: 20px;
+	font-weight: 600;
+}
+
+.bookpage-price {
+	font-weight: 600;
 }
 
 .bookpage-btn {
@@ -167,5 +191,13 @@ export default {
 
 .bookpage-button-set {
 	margin-bottom: 8px;
+}
+
+.blue {
+	color: #5e64ff;
+}
+
+.green {
+	color: #98d85b;
 }
 </style>

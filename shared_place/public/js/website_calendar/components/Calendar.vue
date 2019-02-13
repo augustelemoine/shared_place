@@ -1,37 +1,49 @@
 <template>
 	<div>
-		<full-calendar ref="calendar" :config="config" :events="events"/>
-		<booking-dialog/>
+		<resource-selector v-if="frappe.is_mobile()" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
+		<uom-section :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
+		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
+		<booking-dialog :booked="booked"/>
 	</div>
 </template>
 
 <script>
+	import 'fullcalendar-scheduler';
 	import 'fullcalendar/dist/locale/fr'
 	import moment from 'moment';
 	import BookingDialog from './BookingDialog.vue';
+	import UomSection from './UomSection.vue';
+	import resourceSelector from './resourceSelector.vue'
 
 	export default {
 		name: 'calendar',
+		props: ['booked'],
 		components: {
-			BookingDialog
+			BookingDialog,
+			UomSection,
+			resourceSelector
 		},
 		data () {
 			return {
 				events: [],
-				resources: []
+				resources: [],
+				available_uoms: ["hour"],
+				uom: "hour",
+				selectedResource: {}
 			}
 		},
 		created() {
-			this.getSettings();
 			this.$root.$on('booking', (response) => {
-				 this.$refs.calendar.$emit('refetch-events');
+				this.$refs.calendar.$emit('refetch-events');
 			})
 
 			this.$root.$on('reload_calendar', () => {
 				this.$refs.calendar.$emit('refetch-events');
 			})
+
 		},
 		mounted() {
+			this.getUoms();
 			this.getResources();
 		},
 		computed: {
@@ -40,12 +52,12 @@
 					locale: frappe.boot.lang,
 					header: {
 						left: 'prev,next today',
-						center: 'title',
-						right: 'timelineDay,timelineWeek,timelineMonth'
+						center: frappe.is_mobile() ? '' : 'title',
+						right: frappe.is_mobile() ? '' :'timelineDay,timelineWeek,timelineMonth'
 					},
 					schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
 					resourceAreaWidth: "20%",
-					defaultView: "timelineDay",
+					defaultView: frappe.is_mobile() ? "listWeek": "timelineDay",
 					resourceLabelText: "Room/Resources",
 					resourceGroupField: "category",
 					resources: (callback) => {
@@ -56,7 +68,9 @@
 							method: "shared_place.templates.pages.shared_place_calendar.check_availabilities",
 							args: {
 								'start':  moment(start).format("YYYY-MM-DD"), 
-								'end': moment(end).format("YYYY-MM-DD")
+								'end': moment(end).format("YYYY-MM-DD"),
+								'uom': this.uom,
+								'resources': frappe.is_mobile() ? (Object.keys(this.selectedResource).length ? [this.selectedResource] : []) : this.resources
 							},
 							callback: (r) => {
 								this.events = r.message;
@@ -69,12 +83,15 @@
 					},
 					allDaySlot: false,
 					minTime: '06:00:00',
-					maxTime: '21:00:00',
+					maxTime: '20:00:00',
 					slotDuration: '60',
 					scrollTime: '06:00:00',
+					height: frappe.is_mobile() ? 1000 : "auto",
+					contentHeight: frappe.is_mobile() ? 1000 : "auto",
+					aspectRatio: 4,
 					weekends: false,
 					defaultDate: moment(new Date()).add(1,'days'),
-					handleWindowResize: false,
+					handleWindowResize: true,
 					editable: false,
 					timeFormat: 'H(:mm)'
 				}
@@ -86,7 +103,7 @@
 					method: "shared_place.templates.pages.shared_place_calendar.get_rooms_and_resources",
 					callback: (r) => {
 						this.resources = r.message;
-						this.$refs.calendar.fireMethod('refetchResources');
+						this.getSettings();
 					}
 				})
 			},
@@ -110,13 +127,44 @@
 				frappe.call({	
 					method: 'shared_place.templates.pages.shared_place_calendar.get_settings',
 					callback: (r) => {
-						this.$refs.calendar.fireMethod('option', 'minTime', r.message.calendar_start_time);
-						this.$refs.calendar.fireMethod('option', 'scrollTime', r.message.calendar_start_time);
-						this.$refs.calendar.fireMethod('option', 'maxTime', r.message.calendar_end_time);
-						this.$refs.calendar.fireMethod('option', 'slotDuration', r.message.minimum_booking_time_mins);
-						this.$refs.calendar.fireMethod('option', 'weekends', r.message.week_end_bookings);
+						this.$refs.calendar.fireMethod('option', {
+							'minTime': r.message[0].calendar_start_time,
+							'scrollTime': r.message[0].calendar_start_time,
+							'maxTime': r.message[0].calendar_end_time,
+							'slotDuration': (parseInt(r.message[0].minimum_booking_time) * 60).toString(),
+							'weekends': r.message[0].week_end_bookings
+							});
+						this.$refs.calendar.fireMethod('refetchResources');
+						this.$refs.calendar.$emit('refetch-events');
 					}
 				});
+			},
+			uomChanged(value) {
+				this.uom = value;
+				this.$refs.calendar.$emit('refetch-events');
+			},
+			getUoms() {
+				frappe.call({
+					method: "shared_place.templates.pages.shared_place_calendar.get_uoms",
+					callback: (r) => {
+						this.available_uoms = r.message;
+					}
+				})
+			},
+			selectResource(res) {
+				this.selectedResource = res;
+				this.$refs.calendar.$emit('refetch-events');
+			},
+			showCalendar() {
+				if (frappe.is_mobile()) {
+					if (Object.keys(this.selectedResource).length) {
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return true;
+				}
 			}
 		}
 	}

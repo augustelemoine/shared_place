@@ -6,7 +6,7 @@ frappe.ui.form.on('Shared Place Booking', {
 		frm.set_query("booking_type", function() {
 			return {
 				filters: {
-					name: ['in', ['Shared Place Room', 'Shared Place Resource']]
+					name: ['in', ['Shared Place Room', 'Shared Place Resource', 'Shared Place Coworking Space']]
 				}
 			}
 		})

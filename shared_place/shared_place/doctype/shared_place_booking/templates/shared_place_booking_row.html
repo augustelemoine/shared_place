@@ -1,0 +1,33 @@
+
+<div class="web-list-item">
+	{% set today = frappe.utils.getdate(frappe.utils.nowdate()) %}
+	<a href = "{{ doc.route }}/">
+		<div class="row">
+			<div class="col-sm-6 text-left small bold" style="margin-top: -3px;"">
+				<span class="indicator
+				{% if frappe.utils.getdate(doc.starts_on) > today %}
+					green
+				{% else %}
+					blue
+				{% endif %}
+				">{{ doc.title }}</span>
+			</div>
+			<div class="col-sm-3 small">
+				<span class="text-muted">
+					Starts on
+				</span>
+				<div class="text-muted bold">
+					{{ frappe.utils.format_datetime(doc.starts_on, "medium") }}
+				</div>
+			</div>
+			<div class="col-sm-3 small">
+				<span class="text-muted">
+					Ends on
+				</span>
+				<div class="bold">
+					{{ frappe.utils.format_datetime(doc.ends_on, "medium") }}
+				</div>
+			</div>
+		</div>
+	</a>
+</div>

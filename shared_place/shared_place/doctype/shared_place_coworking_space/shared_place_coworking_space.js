@@ -3,7 +3,7 @@
 
 {% include 'shared_place/shared_place/booking_common.js' %}
 
-frappe.ui.form.on('Shared Place Resource', {
+frappe.ui.form.on('Shared Place Coworking Space', {
 	refresh: function(frm) {
 
 	}

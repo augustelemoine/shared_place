@@ -4,16 +4,29 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.model.document import Document
+from frappe.website.website_generator import WebsiteGenerator
 from frappe import _
 import datetime
-from frappe.utils import getdate, get_datetime, get_datetime_str, add_days, cstr, date_diff, add_months, cint
+from frappe.utils import getdate, get_datetime, get_datetime_str, add_days, cstr, date_diff, add_months, cint, add_to_date
 
 weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
-class SharedPlaceBooking(Document):
-	def on_submit(self):
-		pass
+class SharedPlaceBooking(WebsiteGenerator):
+	def autoname(self):
+		from frappe.model.naming import set_name_by_naming_series
+		set_name_by_naming_series(self)
+
+	def validate(self):
+		if not self.route:
+			self.route = "spbooking/" + self.name
+
+	def get_context(self, context):
+		context.no_cache = 1
+		context.show_sidebar = True
+		context.title = self.title
+
+	def get_title(self):
+		return _("Shared Place Booking")
 
 	def on_trash(self):
 		linked_docs = frappe.get_all(self.doctype, filters={"linked_booking": self.name, "docstatus": 0, "name": ["!=", self.name]})
@@ -27,6 +40,30 @@ class SharedPlaceBooking(Document):
 			frappe.delete_doc(self.doctype, self.linked_booking, ignore_permissions=True)
 			frappe.db.commit()
 
+def get_list_context(context=None):
+	context.update({
+		"show_sidebar": True,
+		"title": _("Shared Place Booking"),
+		"get_list": get_booking_list,
+		"row_template": "shared_place/doctype/shared_place_booking/templates/shared_place_booking_row.html"
+	})
+
+def get_booking_list(doctype, txt, filters, limit_start, limit_page_length=20, order_by="modified"):
+	print(doctype)
+	print(txt)
+	print(filters)
+	return frappe.db.sql('''select name, title, booked_by, starts_on, ends_on, modified, route
+		from `tabShared Place Booking`
+		where docstatus = 1 and booked_by = %s
+		order by starts_on asc limit {0}, {1}
+		'''.format(limit_start, limit_page_length), frappe.session.user, as_dict=1)
+
+def get_registered_slots(resource, date):
+	filters=[["Shared Place Booking","booking_type","=",resource["doctype"]], ["Shared Place Booking","booked_resource","=",resource["id"]], ["Shared Place Booking", "docstatus","!=",2]]
+	start = get_datetime(date).strftime("%Y-%m-%d %H:%M:%S")
+	end = add_to_date(start, days=int(frappe.db.get_value("Shared Place Settings", None, "limit")))
+
+	return get_events(start=start, end=end, filters=filters)
 
 @frappe.whitelist()
 def get_events(start, end, filters=None):

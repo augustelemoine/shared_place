@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 from . import __version__ as app_version
 
+from frappe import _
+
 app_name = "shared_place"
 app_title = "Shared Place"
 app_publisher = "Dokos"
@@ -49,7 +51,14 @@ web_include_js = "/assets/js/shared_place.js"
 # ----------
 
 # automatically create page for each record of this doctype
-# website_generators = ["Web Page"]
+website_generators = ["Shared Place Booking"]
+website_route_rules = [
+	{"from_route": "/spbooking", "to_route": "Shared Place Booking"}
+]
+
+standard_portal_menu_items = [
+	{"title": _("Shared Place Booking"), "route": "/spbooking", "reference_doctype": "Shared Place Booking"},
+]
 
 calendars = ["Shared Place Booking"]
 
@@ -84,6 +93,9 @@ calendars = ["Shared Place Booking"]
 doc_events = {
 	"Quotation": {
 		"on_trash": "shared_place.shared_place.utils.on_quotation_delete"
+	},
+	"Data Migration Connector": {
+		"on_save": "shared_place.shared_place.utils.update_gcalendar_connector"
 	}
 }
 
@@ -117,6 +129,7 @@ doc_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-	"erpnext.shopping_cart.cart.place_order": "shared_place.shared_place.utils.shared_place_order"
+	"erpnext.shopping_cart.cart.place_order": "shared_place.shared_place.utils.shared_place_order",
+	"erpnext.shopping_cart.cart.update_cart": "shared_place.shared_place.utils.shared_update_cart",
 }
 

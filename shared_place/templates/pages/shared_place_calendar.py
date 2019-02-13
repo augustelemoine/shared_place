@@ -5,28 +5,49 @@
 from __future__ import unicode_literals
 import frappe, datetime, calendar, json
 from frappe import _
-from frappe.utils import getdate, get_time, now_datetime, cint, get_datetime, add_days, format_datetime
+from frappe.utils import getdate, get_time, now_datetime, cint, get_datetime, add_days, format_datetime, fmt_money
 from datetime import timedelta, date
 from shared_place.shared_place.utils import get_resource_price_and_qty
+from shared_place.shared_place.doctype.shared_place_booking.shared_place_booking import get_registered_slots
 
 def get_context(context):
 	context.no_cache = 1
 
 @frappe.whitelist(allow_guest=True)
 def get_rooms_and_resources():
-	rooms = [dict(x,**{"doctype": "Shared Place Room","category": _("Rooms")}) for x in frappe.get_all("Shared Place Room", filters={"allow_online_booking": 1}, fields=['name as id', 'room_name as title', 'item'])]
-	resources = [dict(x,**{"doctype": "Shared Place Resource", "category": _("Resources")}) for x in frappe.get_all("Shared Place Resource", filters={"allow_online_booking": 1}, fields=['name as id', 'resource_name as title', 'item', 'room'])]
+	coworking = [dict(x,**{"doctype": "Shared Place Coworking Space","category": _("Coworking Spaces")}) for x in frappe.get_all("Shared Place Coworking Space", \
+		filters={"allow_online_booking": 1}, fields=['name as id', 'coworking_space as title', 'item', 'number_of_seats', 'price_list', 'half_day_booking', 'full_day_booking'])]
+	rooms = [dict(x,**{"doctype": "Shared Place Room","category": _("Rooms")}) for x in frappe.get_all("Shared Place Room", \
+		filters={"allow_online_booking": 1}, fields=['name as id', 'room_name as title', 'item', 'price_list', 'half_day_booking', 'full_day_booking'])]
+	resources = [dict(x,**{"doctype": "Shared Place Resource", "category": _("Resources")}) for x in frappe.get_all("Shared Place Resource", \
+		filters={"allow_online_booking": 1}, fields=['name as id', 'resource_name as title', 'item', 'room', 'price_list', 'half_day_booking', 'full_day_booking'])]
 
 	result = []
+	if coworking:
+		result.extend(coworking)
 	if rooms:
 		result.extend(rooms)
 	if resources:
 		result.extend(resources)
 	return result
 
+
+@frappe.whitelist(allow_guest=True)
+def get_uoms():
+	half_day = frappe.db.get_value("Shared Place Settings", None, "half_day_booking")
+	full_day = frappe.db.get_value("Shared Place Settings", None, "full_day_booking")
+
+	result = ['hour']
+	if int(half_day) == 1:
+		result.append('halfday')
+	if int(full_day) == 1:
+		result.append('fullday')
+
+	return result
+
 @frappe.whitelist(allow_guest=True)
 def get_settings():
-	return frappe.db.get_values("Shared Place Settings", None, ["calendar_start_time", "calendar_end_time", "minimum_booking_time_mins", "week_end_bookings"], as_dict=True)
+	return frappe.db.get_values("Shared Place Settings", None, ["calendar_start_time", "calendar_end_time", "minimum_booking_time", "week_end_bookings"], as_dict=True)
 
 def daterange(start_date, end_date):
 	if start_date < now_datetime():
@@ -35,12 +56,18 @@ def daterange(start_date, end_date):
 		yield start_date + timedelta(n)
 
 @frappe.whitelist(allow_guest=True)
-def check_availabilities(start, end):
-	resources = get_rooms_and_resources()
+def check_availabilities(start, end, resources, uom='hour'):
 	final_avail = []
+	resources = json.loads(resources)
 	linked_resource = False
 
 	for resource in resources:
+
+		if resource['doctype'] == "Shared Place Coworking Space": 
+			group = True 
+		else: 
+			group = False
+
 		if 'room' in resource and resource['room'] is not None:
 			linked_resource = True
 			original_resource = resource.copy()
@@ -51,7 +78,7 @@ def check_availabilities(start, end):
 		resource_details = get_resource_price_and_qty({ "item_code": linked_item.item, "price_list": linked_item.price_list})
 
 		if resource_details and resource_details[0].min_qty:
-			duration = resource_details[0].min_qty * 60
+			duration = (int(frappe.db.get_value("Shared Place Settings", None, "minimum_booking_time")) * 60)
 			init = datetime.datetime.strptime(start, '%Y-%m-%d')
 			finish = datetime.datetime.strptime(end, '%Y-%m-%d')
 			days_limit = frappe.db.get_value("Shared Place Settings", None, "limit") or 360
@@ -62,19 +89,38 @@ def check_availabilities(start, end):
 				for dt in daterange(init, finish):
 					date = dt.strftime("%Y-%m-%d")
 
-					calendar_availability = _check_availability(resource['doctype'], resource['id'], date, duration)
+					calendar_availability = _check_availability(resource, date, duration, group, uom)
+
 					if bool(calendar_availability) == True:
 						if bool(linked_resource) == True:
-							avail = [dict(x,**{"resourceId": original_resource["id"], "resourceDt": original_resource['doctype'], "item": original_resource['item']}) for x in calendar_availability[0]]
+							avail = [dict(x,**{"resourceId": original_resource["id"], "resourceDt": original_resource['doctype'], "item": original_resource['item']}) for x in calendar_availability]
 						else:
-							avail = [dict(x,**{"resourceId": resource["id"], "resourceDt": resource['doctype'], "item": resource['item']}) for x in calendar_availability[0]]
+							avail = [dict(x,**{"resourceId": resource["id"], "resourceDt": resource['doctype'], "item": resource['item']}) for x in calendar_availability]
 
 						payload += avail
+
+
+					if resource['doctype'] == "Shared Place Coworking Space":
+						payload = get_coworking_availabilities(resource, payload, start, end)
 
 			final_avail.extend(payload)
 	return final_avail
 
-def _check_availability(dt, dn, date, duration):
+def get_coworking_availabilities(resource, payload, start, end):
+	registered = get_registered_slots(resource, start)
+	
+	result = []
+	for slot in payload:
+		filtered_registrations = [d for d in registered if \
+			get_datetime(slot["start"])<get_datetime(d["ends_on"]) and get_datetime(slot["end"])>get_datetime(d["starts_on"])]
+		slot["registered"] = len(filtered_registrations)
+
+		if slot["registered"] < resource["number_of_seats"]:
+			result.append(slot)
+
+	return result
+
+def _check_availability(resource, date, duration, group, uom):
 	date = getdate(date)
 	day = calendar.day_name[date.weekday()]
 	if (date < getdate()):
@@ -83,43 +129,70 @@ def _check_availability(dt, dn, date, duration):
 	availability = []
 	schedules = []
 
-	if frappe.db.get_value(dt, dn, 'custom_schedule') == 1:
-		resource = frappe.get_doc(dt, dn)
+	uom_dict = {"hour": {"field": "custom_schedule", "schedule": "schedule"}, \
+		"halfday": {"field": "half_day_booking", "schedule": "half_day_schedule"}, \
+		"fullday": {"field": "full_day_booking", "schedule": "full_day_schedule"}
+	}
+
+	schedule = uom_dict[uom]["schedule"]
+	if uom in ["halfday", "fullday"]:
+		if frappe.db.get_value(resource['doctype'], resource['id'], uom_dict[uom]["field"]) == 1:
+			sch_settings = frappe.get_doc("Shared Place Settings", None)
+		else:
+			return availability
+	elif frappe.db.get_value(resource['doctype'], resource['id'], uom_dict[uom]["field"]) == 1:
+		sch_settings = frappe.get_doc(resource['doctype'], resource['id'])
 	else:
-		resource = frappe.get_doc("Shared Place Settings", None)
+		sch_settings = frappe.get_doc("Shared Place Settings", None)
 	
-	sch_attribute = getattr(resource, "schedule", None)
-	if sch_attribute and resource.schedule:
-		day_sch = filter(lambda x: x.day == day, resource.schedule)
+
+	if getattr(sch_settings, schedule):
+		day_sch = filter(lambda x: x.day == day, getattr(sch_settings, schedule))
 		if not day_sch:
 			return availability
 
 		for line in day_sch:
 			if(datetime.datetime.combine(date, get_time(line.end_time)) > now_datetime()):
+
+				if uom == "hour":
+					duration = datetime.timedelta(minutes=cint(duration))
+				else:
+					diff = datetime.datetime.combine(date, get_time(line.end_time)) - datetime.datetime.combine(date, get_time(line.start_time))
+					duration = datetime.timedelta(minutes=cint(diff.seconds/60))
+	
 				schedules.append({"start": datetime.datetime.combine(date, get_time(line.start_time)), "end": datetime.datetime.combine(
-					date, get_time(line.end_time)), "duration": datetime.timedelta(minutes=cint(duration))})
+					date, get_time(line.end_time)), "duration": duration})
+
 		if schedules:
-			availability.extend(get_availability_from_schedule(dt, dn, schedules, date))
+			availability.extend(get_availability_from_schedule(resource, schedules, date, group, uom))
 
 	return availability
 
-def get_availability_from_schedule(dt, dn, schedules, date):
+def get_availability_from_schedule(resource, schedules, date, group, uom):
 	from shared_place.shared_place.doctype.shared_place_booking.shared_place_booking import get_events
 	data = []
 	for line in schedules:
 		duration = get_time(line["duration"])
-		events = get_events(line["start"].strftime("%Y-%m-%d %H:%M:%S"), \
-			line["end"].strftime("%Y-%m-%d %H:%M:%S"), \
-			filters=[["Shared Place Booking","booking_type","=", dt], ["Shared Place Booking","booked_resource","=", dn]])
 
-		event_list = []
-		for event in events:
-			if (get_datetime(event.starts_on) >= line["start"] and get_datetime(event.starts_on) <= line["end"]) \
-				or get_datetime(event.ends_on) >= line["start"]:
-				event_list.append(event)
+		if group:
+			event_list = []
+
+		else:
+			events = get_events(line["start"].strftime("%Y-%m-%d %H:%M:%S"), \
+				line["end"].strftime("%Y-%m-%d %H:%M:%S"), \
+				filters=[["Shared Place Booking","booking_type","=", resource['doctype']], ["Shared Place Booking","booked_resource","=", resource['id']]])
+
+			if events and uom != "hour":
+				return []
+
+			event_list = []
+			for event in events:
+				if (get_datetime(event.starts_on) >= line["start"] and get_datetime(event.starts_on) <= line["end"]) \
+					or get_datetime(event.ends_on) >= line["start"]:
+					event_list.append(event)
 
 		available_slot = find_available_slot(date, duration, line, event_list)
-		data.append(available_slot)
+		data.extend(available_slot)
 
 	return data
 
@@ -189,6 +262,30 @@ def reduced(timeseries):
 		if end > prev:
 			prev = end
 			yield start, end
+
+@frappe.whitelist(allow_guest=True)
+def get_booked_items():
+	from erpnext.shopping_cart.cart import get_cart_quotation
+	doc = get_cart_quotation()
+
+	items = {}
+	for item in doc["doc"].items:
+		items.update({item.item_code: item.stock_qty})
+
+	return items
+
+@frappe.whitelist(allow_guest=True)
+def get_slot_price(item_code, qty, price_list=None):
+	from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
+	from erpnext.utilities.product import get_price
+
+	settings = get_shopping_cart_settings()
+
+	if not price_list:
+		price_list = settings.price_list
+
+	price = get_price(item_code, price_list, settings.default_customer_group, settings.company, qty)
+	return fmt_money(float(price.price_list_rate) * float(qty), currency=price.currency)
 
 @frappe.whitelist()
 def book_slot(doctype, resource, start, end):

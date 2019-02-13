@@ -39,6 +39,7 @@ frappe.ready(function() {
 			args: {item: item_code}
 		}).done(() => {
 				erpnext.shopping_cart.shopping_cart_update(item_code, 0, true);
+				shared_place.updates.trigger('item_removed', item_code);
 				shared_place.updates.trigger('reload_calendar');
 		});
 	});
@@ -50,7 +51,8 @@ function change_default_btn() {
 		window.calendar_items.forEach(item => {
 			let $btnWrapper = $('body').find(`[data-item-code="${item}"]`).parent();
 			$btnWrapper.removeClass("number-spinner");
-			$btnWrapper.html(`<button class="btn btn-xs sp-remove-btn" data-item-code="${item}">Remove</button>`);
+			let btnText = __("Remove all items: {0}", [item])
+			$btnWrapper.html(`<button class="btn btn-xs sp-remove-btn" data-item-code="${item}">${btnText}</button>`);
 		})
 	}
 }

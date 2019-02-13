@@ -1,0 +1,22 @@
+{
+ "creation": "2019-02-13 15:30:23.894157",
+ "docstatus": 0,
+ "doctype": "Data Migration Plan",
+ "idx": 0,
+ "mappings": [
+  {
+   "enabled": 1,
+   "mapping": "Event to Shared Place Booking"
+  },
+  {
+   "enabled": 1,
+   "mapping": "GCalendar to Shared Place Booking"
+  }
+ ],
+ "modified": "2019-02-13 15:30:33.930118",
+ "modified_by": "Administrator",
+ "module": "Shared Place",
+ "name": "GCalendar Shared Place Sync",
+ "owner": "Administrator",
+ "plan_name": "GCalendar Shared Place Sync"
+}

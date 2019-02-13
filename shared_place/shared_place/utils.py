@@ -4,7 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.utils import get_url
+from frappe.utils import get_url, flt, cint
 from frappe import _
 
 @frappe.whitelist(allow_guest=True)
@@ -13,7 +13,9 @@ def get_url_list_for_redirect():
 		SELECT DISTINCT item 
 		FROM (SELECT item FROM `tabShared Place Room`
 		UNION ALL 
-		SELECT item FROM`tabShared Place Resource`) result
+		SELECT item FROM `tabShared Place Resource`
+		UNION ALL 
+		SELECT item FROM `tabShared Place Coworking Space`) result
 	""")
 	
 	url_list = [get_url(x[0]) for x in frappe.get_all("Item", filters=[["name", "in", items]], fields=["route"], as_list=1)]
@@ -55,6 +57,64 @@ def shared_place_order():
 	return sales_order
 
 @frappe.whitelist()
+def shared_update_cart(item_code, qty, with_items=False):
+	from erpnext.shopping_cart.cart import update_cart
+	calendar_items = get_url_list_for_redirect()
+
+	if item_code in calendar_items["items"]:
+		return update_calendar_items_cart(item_code, qty, with_items)
+	else:
+		return update_cart(item_code, qty, with_items)
+
+def update_calendar_items_cart(item_code, qty, with_items=False):
+	from erpnext.shopping_cart.cart import _get_cart_quotation, apply_cart_settings, \
+		set_cart_count, get_cart_quotation, get_shopping_cart_menu
+	quotation = _get_cart_quotation()
+
+	empty_card = False
+	qty = flt(qty)
+	if qty == 0:
+		quotation_items = quotation.get("items", {"item_code": ["!=", item_code]})
+		if quotation_items:
+			quotation.set("items", quotation_items)
+		else:
+			empty_card = True
+
+	else:
+		quotation.append("items", {
+			"doctype": "Quotation Item",
+			"item_code": item_code,
+			"qty": qty
+		})
+
+	apply_cart_settings(quotation=quotation)
+
+	quotation.flags.ignore_permissions = True
+	quotation.payment_schedule = []
+	if not empty_card:
+		quotation.save()
+	else:
+		quotation.delete()
+		quotation = None
+
+	set_cart_count(quotation)
+
+	context = get_cart_quotation(quotation)
+
+	if cint(with_items):
+		return {
+			"items": frappe.render_template("templates/includes/cart/cart_items.html",
+				context),
+			"taxes": frappe.render_template("templates/includes/order/order_taxes.html",
+				context),
+		}
+	else:
+		return {
+			'name': quotation.name,
+			'shopping_cart_menu': get_shopping_cart_menu(context)
+		}
+
+@frappe.whitelist()
 def remove_linked_bookings(item):
 	from erpnext.shopping_cart.cart import _get_cart_quotation, update_cart
 
@@ -91,3 +151,7 @@ def on_quotation_delete(doc, method):
 		bookings = frappe.get_all("Shared Place Booking", filters={"quotation": doc.name})
 		for booking in bookings:
 			frappe.delete_doc("Shared Place Booking", booking.name, ignore_permissions=True)
+
+def update_gcalendar_connector(doc, method):
+	if doc.python_module == "frappe.data_migration.doctype.data_migration_connector.connectors.calendar_connector":
+		doc.python_module = "shared_place.shared_place.gcalendar_connector"
