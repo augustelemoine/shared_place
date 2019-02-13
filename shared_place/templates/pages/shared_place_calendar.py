@@ -80,7 +80,7 @@ def check_availabilities(start, end, resources, uom='hour'):
 		if resource_details and resource_details[0].min_qty:
 			minimum_booking_time = frappe.db.get_value("Shared Place Settings", None, "minimum_booking_time")
 			if minimum_booking_time:
-				duration = (int(d) * 60)
+				duration = (int(minimum_booking_time) * 60)
 				init = datetime.datetime.strptime(start, '%Y-%m-%d')
 				finish = datetime.datetime.strptime(end, '%Y-%m-%d')
 				days_limit = frappe.db.get_value("Shared Place Settings", None, "limit") or 360

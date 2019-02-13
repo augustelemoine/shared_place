@@ -13,7 +13,13 @@ function check_if_item_price_exists(frm) {
 	frappe.call('shared_place.shared_place.doctype.shared_place_settings.shared_place_settings.check_pricing', { doc: frm.doc })
 	.then(r => {
 		const msg = frappe.render_template(prices_template, {data: r.message})
-		frappe.msgprint(msg)
+		
+		if (r.message.length > 0) {
+			frappe.msgprint(msg)
+		} else {
+			frappe.msgprint(__("Please setup prices for this item before allowing online booking"))
+		}
+		
 	})
 }
 
