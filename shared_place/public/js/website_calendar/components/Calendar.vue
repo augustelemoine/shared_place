@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<resource-selector v-if="this.isMobile" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
+		<div>{{ mobile }}</div>
+		<resource-selector v-if="this.isMobile()" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
 		<uom-section :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
 		<booking-dialog :booked="booked"/>
@@ -47,17 +48,20 @@
 			this.getResources();
 		},
 		computed: {
+			mobile() {
+				return this.isMobile()
+			},
 			config() {
 				return {
 					locale: frappe.boot.lang,
 					header: {
 						left: 'prev,next today',
-						center: this.isMobile ? '' : 'title',
-						right: this.isMobile ? '' :'timelineDay,timelineWeek,timelineMonth'
+						center: this.isMobile() ? '' : 'title',
+						right: this.isMobile() ? '' :'timelineDay,timelineWeek,timelineMonth'
 					},
 					schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
 					resourceAreaWidth: "20%",
-					defaultView: this.isMobile ? "listWeek": "timelineDay",
+					defaultView: this.isMobile() ? "listWeek": "timelineDay",
 					resourceLabelText: "Room/Resources",
 					resourceGroupField: "category",
 					resources: (callback) => {
@@ -70,7 +74,7 @@
 								'start':  moment(start).format("YYYY-MM-DD"), 
 								'end': moment(end).format("YYYY-MM-DD"),
 								'uom': this.uom,
-								'resources': this.isMobile ? (Object.keys(this.selectedResource).length ? [this.selectedResource] : []) : this.resources
+								'resources': this.isMobile() ? (Object.keys(this.selectedResource).length ? [this.selectedResource] : []) : this.resources
 							},
 							callback: (r) => {
 								this.events = r.message;
@@ -86,8 +90,8 @@
 					maxTime: '20:00:00',
 					slotDuration: '60',
 					scrollTime: '06:00:00',
-					height: this.isMobile ? 1000 : "auto",
-					contentHeight: this.isMobile ? 1000 : "auto",
+					height: this.isMobile() ? 1000 : "auto",
+					contentHeight: this.isMobile() ? 1000 : "auto",
 					aspectRatio: 4,
 					weekends: false,
 					defaultDate: moment(new Date()).add(1,'days'),
@@ -104,7 +108,7 @@
 					method: "shared_place.templates.pages.shared_place_calendar.get_rooms_and_resources",
 					callback: (r) => {
 						this.resources = r.message;
-						if (!this.isMobile) {
+						if (!this.isMobile()) {
 							this.getSettings();
 						}
 					}
@@ -162,7 +166,7 @@
 
 			},
 			showCalendar() {
-				if (this.isMobile) {
+				if (this.isMobile()) {
 					if (Object.keys(this.selectedResource).length) {
 						return true;
 					} else {
