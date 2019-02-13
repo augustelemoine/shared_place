@@ -47,7 +47,9 @@ def get_uoms():
 
 @frappe.whitelist(allow_guest=True)
 def get_settings():
-	return frappe.db.get_values("Shared Place Settings", None, ["calendar_start_time", "calendar_end_time", "minimum_booking_time", "week_end_bookings"], as_dict=True)
+	settings = frappe.db.get_values("Shared Place Settings", None, ["calendar_start_time", "calendar_end_time", "minimum_booking_time", "week_end_bookings"], as_dict=True)[0]
+	settings.update({"lang": frappe.local.lang})
+	return settings
 
 def daterange(start_date, end_date):
 	if start_date < now_datetime():

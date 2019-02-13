@@ -31,6 +31,7 @@ Resource Location, Lieu de la ressource
 Resource Name, Nom de la ressource
 Resources, Ressources
 Room/Resource, Salle/Ressource
+Rooms/Resources, Salles/Ressources,
 Rooms, Salles
 Shared Place, Tiers Lieux
 Shared Place Booking, Réservation
@@ -46,4 +47,5 @@ Unit of measure for half-day, Unité de mesure pour la demi-journée
 Use a custom schedule, Utiliser un calendrier spécifique
 route, url
 Please setup prices for this item before allowing online booking, Veuillez configurer des prix pour cet article avant d'autoriser les réservations en ligne
-No slot available, Aucun créneau de disponible
+No slot available, Aucun créneau de disponible,
+Help text displayed above the calendar, Texte d'aide affiché au dessus du calendrier

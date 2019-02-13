@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<div>{{ mobile }}</div>
 		<resource-selector v-if="this.isMobile()" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
 		<uom-section :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
@@ -18,7 +17,7 @@
 
 	export default {
 		name: 'calendar',
-		props: ['booked', 'isMobile'],
+		props: ['booked', 'isMobile', 'lang'],
 		components: {
 			BookingDialog,
 			UomSection,
@@ -48,12 +47,9 @@
 			this.getResources();
 		},
 		computed: {
-			mobile() {
-				return this.isMobile()
-			},
 			config() {
 				return {
-					locale: frappe.boot.lang,
+					locale: 'fr',
 					header: {
 						left: 'prev,next today',
 						center: this.isMobile() ? '' : 'title',
@@ -62,7 +58,7 @@
 					schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
 					resourceAreaWidth: "20%",
 					defaultView: this.isMobile() ? "listWeek": "timelineDay",
-					resourceLabelText: "Room/Resources",
+					resourceLabelText: __("Rooms/Resources"),
 					resourceGroupField: "category",
 					resources: (callback) => {
 						callback(this.resources);
@@ -98,7 +94,9 @@
 					handleWindowResize: true,
 					editable: false,
 					timeFormat: 'H(:mm)',
-					noEventsMessage: __("No slot available")
+					noEventsMessage: __("No slot available"),
+					displayEventTime: false,
+					titleFormat: 'D MMMM YYYY'
 				}
 				}
 		},
@@ -135,11 +133,12 @@
 					method: 'shared_place.templates.pages.shared_place_calendar.get_settings',
 					callback: (r) => {
 						this.$refs.calendar.fireMethod('option', {
-							'minTime': r.message[0].calendar_start_time,
-							'scrollTime': r.message[0].calendar_start_time,
-							'maxTime': r.message[0].calendar_end_time,
-							'slotDuration': (parseInt(r.message[0].minimum_booking_time) * 60).toString(),
-							'weekends': r.message[0].week_end_bookings
+							'locale': r.message.lang,
+							'minTime': r.message.calendar_start_time,
+							'scrollTime': r.message.calendar_start_time,
+							'maxTime': r.message.calendar_end_time,
+							'slotDuration': (parseInt(r.message.minimum_booking_time) * 60).toString(),
+							'weekends': r.message.week_end_bookings
 							});
 						this.$refs.calendar.fireMethod('refetchResources');
 						this.$refs.calendar.$emit('refetch-events');
