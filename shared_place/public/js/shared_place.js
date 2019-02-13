@@ -3,6 +3,10 @@ frappe.ready(function() {
 	frappe.provide('shared_place.updates');
 	frappe.provide('shared_place.utils');
 
+	const $mobile_menu = $('.dropdown-menu-right .divider');
+	const shopping_cart = __("Cart")
+	$(`<li data-label="cart"><a href="/cart">${shopping_cart}</a></li>`).insertBefore($mobile_menu);
+
 	frappe.call({
 		method: "shared_place.shared_place.utils.get_url_list_for_redirect",
 		callback: (r) => {
