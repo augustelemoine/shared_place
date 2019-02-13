@@ -38,9 +38,9 @@ def get_uoms():
 	full_day = frappe.db.get_value("Shared Place Settings", None, "full_day_booking")
 
 	result = ['hour']
-	if int(half_day) == 1:
+	if half_day and int(half_day) == 1:
 		result.append('halfday')
-	if int(full_day) == 1:
+	if full_day and int(full_day) == 1:
 		result.append('fullday')
 
 	return result
@@ -78,32 +78,34 @@ def check_availabilities(start, end, resources, uom='hour'):
 		resource_details = get_resource_price_and_qty({ "item_code": linked_item.item, "price_list": linked_item.price_list})
 
 		if resource_details and resource_details[0].min_qty:
-			duration = (int(frappe.db.get_value("Shared Place Settings", None, "minimum_booking_time")) * 60)
-			init = datetime.datetime.strptime(start, '%Y-%m-%d')
-			finish = datetime.datetime.strptime(end, '%Y-%m-%d')
-			days_limit = frappe.db.get_value("Shared Place Settings", None, "limit") or 360
-			limit = datetime.datetime.combine(add_days(getdate(), cint(days_limit)), datetime.datetime.time(datetime.datetime.now()))
+			minimum_booking_time = frappe.db.get_value("Shared Place Settings", None, "minimum_booking_time")
+			if minimum_booking_time:
+				duration = (int(d) * 60)
+				init = datetime.datetime.strptime(start, '%Y-%m-%d')
+				finish = datetime.datetime.strptime(end, '%Y-%m-%d')
+				days_limit = frappe.db.get_value("Shared Place Settings", None, "limit") or 360
+				limit = datetime.datetime.combine(add_days(getdate(), cint(days_limit)), datetime.datetime.time(datetime.datetime.now()))
 
-			payload = []
-			if init < limit:
-				for dt in daterange(init, finish):
-					date = dt.strftime("%Y-%m-%d")
+				payload = []
+				if init < limit:
+					for dt in daterange(init, finish):
+						date = dt.strftime("%Y-%m-%d")
 
-					calendar_availability = _check_availability(resource, date, duration, group, uom)
+						calendar_availability = _check_availability(resource, date, duration, group, uom)
 
-					if bool(calendar_availability) == True:
-						if bool(linked_resource) == True:
-							avail = [dict(x,**{"resourceId": original_resource["id"], "resourceDt": original_resource['doctype'], "item": original_resource['item']}) for x in calendar_availability]
-						else:
-							avail = [dict(x,**{"resourceId": resource["id"], "resourceDt": resource['doctype'], "item": resource['item']}) for x in calendar_availability]
+						if bool(calendar_availability) == True:
+							if bool(linked_resource) == True:
+								avail = [dict(x,**{"resourceId": original_resource["id"], "resourceDt": original_resource['doctype'], "item": original_resource['item']}) for x in calendar_availability]
+							else:
+								avail = [dict(x,**{"resourceId": resource["id"], "resourceDt": resource['doctype'], "item": resource['item']}) for x in calendar_availability]
 
-						payload += avail
+							payload += avail
 
 
-					if resource['doctype'] == "Shared Place Coworking Space":
-						payload = get_coworking_availabilities(resource, payload, start, end)
+						if resource['doctype'] == "Shared Place Coworking Space":
+							payload = get_coworking_availabilities(resource, payload, start, end)
 
-			final_avail.extend(payload)
+				final_avail.extend(payload)
 	return final_avail
 
 def get_coworking_availabilities(resource, payload, start, end):
