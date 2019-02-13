@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<resource-selector v-if="this.isMobile()" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
-		<uom-section :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
+		<uom-section v-if="showCalendar()" :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
 		<booking-dialog :booked="booked"/>
 	</div>
