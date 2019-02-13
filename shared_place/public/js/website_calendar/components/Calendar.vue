@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<resource-selector v-if="frappe.is_mobile()" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
+		<resource-selector v-if="this.isMobile" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
 		<uom-section :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
 		<booking-dialog :booked="booked"/>
@@ -17,7 +17,7 @@
 
 	export default {
 		name: 'calendar',
-		props: ['booked'],
+		props: ['booked', 'isMobile'],
 		components: {
 			BookingDialog,
 			UomSection,
@@ -52,12 +52,12 @@
 					locale: frappe.boot.lang,
 					header: {
 						left: 'prev,next today',
-						center: frappe.is_mobile() ? '' : 'title',
-						right: frappe.is_mobile() ? '' :'timelineDay,timelineWeek,timelineMonth'
+						center: this.isMobile ? '' : 'title',
+						right: this.isMobile ? '' :'timelineDay,timelineWeek,timelineMonth'
 					},
 					schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
 					resourceAreaWidth: "20%",
-					defaultView: frappe.is_mobile() ? "listWeek": "timelineDay",
+					defaultView: this.isMobile ? "listWeek": "timelineDay",
 					resourceLabelText: "Room/Resources",
 					resourceGroupField: "category",
 					resources: (callback) => {
@@ -70,7 +70,7 @@
 								'start':  moment(start).format("YYYY-MM-DD"), 
 								'end': moment(end).format("YYYY-MM-DD"),
 								'uom': this.uom,
-								'resources': frappe.is_mobile() ? (Object.keys(this.selectedResource).length ? [this.selectedResource] : []) : this.resources
+								'resources': this.isMobile ? (Object.keys(this.selectedResource).length ? [this.selectedResource] : []) : this.resources
 							},
 							callback: (r) => {
 								this.events = r.message;
@@ -86,14 +86,15 @@
 					maxTime: '20:00:00',
 					slotDuration: '60',
 					scrollTime: '06:00:00',
-					height: frappe.is_mobile() ? 1000 : "auto",
-					contentHeight: frappe.is_mobile() ? 1000 : "auto",
+					height: this.isMobile ? 1000 : "auto",
+					contentHeight: this.isMobile ? 1000 : "auto",
 					aspectRatio: 4,
 					weekends: false,
 					defaultDate: moment(new Date()).add(1,'days'),
 					handleWindowResize: true,
 					editable: false,
-					timeFormat: 'H(:mm)'
+					timeFormat: 'H(:mm)',
+					noEventsMessage: __("No slot available")
 				}
 				}
 		},
@@ -103,7 +104,9 @@
 					method: "shared_place.templates.pages.shared_place_calendar.get_rooms_and_resources",
 					callback: (r) => {
 						this.resources = r.message;
-						this.getSettings();
+						if (!this.isMobile) {
+							this.getSettings();
+						}
 					}
 				})
 			},
@@ -153,10 +156,13 @@
 			},
 			selectResource(res) {
 				this.selectedResource = res;
-				this.$refs.calendar.$emit('refetch-events');
+				if (this.$refs.calendar) {
+					this.$refs.calendar.$emit('refetch-events');
+				}
+
 			},
 			showCalendar() {
-				if (frappe.is_mobile()) {
+				if (this.isMobile) {
 					if (Object.keys(this.selectedResource).length) {
 						return true;
 					} else {
