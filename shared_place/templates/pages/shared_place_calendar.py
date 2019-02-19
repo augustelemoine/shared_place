@@ -14,21 +14,36 @@ def get_context(context):
 	context.no_cache = 1
 
 @frappe.whitelist(allow_guest=True)
-def get_rooms_and_resources():
-	coworking = [dict(x,**{"doctype": "Shared Place Coworking Space","category": _("Coworking Spaces")}) for x in frappe.get_all("Shared Place Coworking Space", \
-		filters={"allow_online_booking": 1}, fields=['name as id', 'coworking_space as title', 'item', 'number_of_seats', 'price_list', 'half_day_booking', 'full_day_booking'])]
-	rooms = [dict(x,**{"doctype": "Shared Place Room","category": _("Rooms")}) for x in frappe.get_all("Shared Place Room", \
-		filters={"allow_online_booking": 1}, fields=['name as id', 'room_name as title', 'item', 'price_list', 'half_day_booking', 'full_day_booking'])]
+def get_rooms_and_resources(route=None):
+	coworking = [dict(x,**{"doctype": "Shared Place Coworking Space","category": _("Coworking Spaces"), "options": []}) for x in frappe.get_all("Shared Place Coworking Space", \
+		filters={"allow_online_booking": 1}, fields=['name as id', 'coworking_space as title', 'item', 'number_of_seats', 'price_list', 'half_day_booking', 'full_day_booking', 'several_options'])]
+	rooms = [dict(x,**{"doctype": "Shared Place Room","category": _("Rooms"), "options": []}) for x in frappe.get_all("Shared Place Room", \
+		filters={"allow_online_booking": 1}, fields=['name as id', 'room_name as title', 'item', 'price_list', 'half_day_booking', 'full_day_booking', 'several_options'])]
 	resources = [dict(x,**{"doctype": "Shared Place Resource", "category": _("Resources")}) for x in frappe.get_all("Shared Place Resource", \
 		filters={"allow_online_booking": 1}, fields=['name as id', 'resource_name as title', 'item', 'room', 'price_list', 'half_day_booking', 'full_day_booking'])]
 
 	result = []
 	if coworking:
+		for cow in coworking:
+			if cow['several_options']==1:
+				cow["options"] = frappe.get_all("Shared Place Booking Options", filters=[["parent", "in", cow['id']], ["parenttype", "=", "Shared Place Room"]], fields=["option", "item", "name"])
 		result.extend(coworking)
 	if rooms:
+		for room in rooms:
+			if room['several_options']==1:
+				room["options"] = frappe.get_all("Shared Place Booking Options", filters=[["parent", "=", room['id']], ["parenttype", "=", "Shared Place Room"]], fields=["option", "item", "name"])
 		result.extend(rooms)
 	if resources:
 		result.extend(resources)
+
+	if route:
+		selected_items = [x['name'] for x in frappe.get_all("Item", filters=[['show_in_website', '=', 1], ['route', '=', route[1:]]])]
+		for r in result:
+			if r["item"] in selected_items:
+				r["selected"] = 1
+			else:
+				r["selected"] = 0
+
 	return result
 
 
@@ -37,17 +52,18 @@ def get_uoms():
 	half_day = frappe.db.get_value("Shared Place Settings", None, "half_day_booking")
 	full_day = frappe.db.get_value("Shared Place Settings", None, "full_day_booking")
 
-	result = ['hour']
+	result = {'hour': _("Hour")}
 	if half_day and int(half_day) == 1:
-		result.append('halfday')
+		result.update({'halfday': _("Half-day")})
 	if full_day and int(full_day) == 1:
-		result.append('fullday')
+		result.update({'fullday': _("Full-day")})
 
 	return result
 
 @frappe.whitelist(allow_guest=True)
 def get_settings():
-	settings = frappe.db.get_values("Shared Place Settings", None, ["calendar_start_time", "calendar_end_time", "minimum_booking_time", "week_end_bookings"], as_dict=True)[0]
+	settings = frappe.db.get_values("Shared Place Settings", None, ["calendar_start_time", "calendar_end_time", \
+		"minimum_booking_time", "week_end_bookings", "calendar_help_text"], as_dict=True)[0]
 	settings.update({"lang": frappe.local.lang})
 	return settings
 
@@ -187,7 +203,7 @@ def get_availability_from_schedule(resource, schedules, date, group, uom):
 				filters=[["Shared Place Booking","booking_type","=", resource['doctype']], ["Shared Place Booking","booked_resource","=", resource['id']]])
 
 			if events and uom != "hour":
-				return []
+				event_list = []
 
 			event_list = []
 			for event in events:
@@ -292,10 +308,11 @@ def get_slot_price(item_code, qty, price_list=None):
 	return fmt_money(float(price.price_list_rate) * float(qty), currency=price.currency)
 
 @frappe.whitelist()
-def book_slot(doctype, resource, start, end):
+def book_slot(doctype, resource, start, end, option=None):
 	from erpnext.shopping_cart.cart import _get_cart_quotation
 	user = frappe.db.get_values("User", frappe.session.user, ["full_name", "name"], as_dict=True)[0]
 	resource = json.loads(resource)
+	option = option if option else None
 	bookings = {"quotation": None, "bookings": []}
 
 	quotation = _get_cart_quotation()
@@ -309,7 +326,8 @@ def book_slot(doctype, resource, start, end):
 		"starts_on": start,
 		"ends_on": end,
 		"title": user.full_name,
-		"quotation": quotation.name
+		"quotation": quotation.name,
+		"option": option
 	}).insert()
 
 	if 'room' in resource and resource['room'] is not None:
@@ -322,7 +340,8 @@ def book_slot(doctype, resource, start, end):
 			"starts_on": start,
 			"ends_on": end,
 			"title": user.full_name,
-			"quotation": quotation.name
+			"quotation": quotation.name,
+			"option": option
 		}).insert()
 
 		booking.linked_booking = room_booking.name

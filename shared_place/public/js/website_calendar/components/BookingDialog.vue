@@ -20,6 +20,16 @@
 				<h2 class="bookpage-time">{{ start_time | moment }} - {{ end_time | moment }}</h2>
 			</div>
 			<div class="bookpage-section">
+				<div class="btn-group" v-if="showOptions()">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{{ selectedOption.option || __("Select an option") }}<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li v-for="option in resource.options" :key="option.name" @click="selectOption(option)"><a>{{ option.option }}</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="bookpage-section">
 				<h3 class="bookpage-price green">{{ price }}</h3>
 			</div>
 			<div class="bookpage-section">
@@ -47,7 +57,9 @@ export default {
 			qty: 1,
 			events: [],
 			resource: {},
-			price: null
+			price: null,
+			selectedOption: {},
+			item: null
 		}
 	},
 	watch: {
@@ -68,9 +80,14 @@ export default {
 			this.end_time = event.params.end_time;
 			this.resource = event.params.resource;
 			this.doctype = event.params.doctype;
-			this.item = event.params.item;
 			this.events = event.params.events;
 			this.qty = 1;
+			if (Object.keys(this.resource.options).length) {
+				this.selectedOption = this.resource.options[0]
+				this.item = this.resource.options[0].item;
+			} else {
+				this.item = event.params.item;
+			}
 			this.getPrice();
 		},
 		addToCart() {
@@ -138,7 +155,7 @@ export default {
 			frappe.call({
 				method: "shared_place.templates.pages.shared_place_calendar.get_slot_price",
 				args: {
-					"item_code": this.resource.item,
+					"item_code": this.item,
 					"price_list": this.resource.price_list,
 					"qty": this.qty
 				},
@@ -146,6 +163,20 @@ export default {
 					this.price = r.message;
 				}
 			});
+		},
+		showOptions() {
+			if (!Object.keys(this.resource).length) {
+				return false;
+			} else if (!Object.keys(this.resource.options).length) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		selectOption(option) {
+			this.selectedOption = option;
+			this.item = option.item;
+			this.getPrice();
 		}
 	}
 }

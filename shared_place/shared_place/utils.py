@@ -15,7 +15,9 @@ def get_url_list_for_redirect():
 		UNION ALL 
 		SELECT item FROM `tabShared Place Resource`
 		UNION ALL 
-		SELECT item FROM `tabShared Place Coworking Space`) result
+		SELECT item FROM `tabShared Place Coworking Space`
+		UNION ALL
+		SELECT item FROM `tabShared Place Booking Options`) result
 	""")
 	
 	url_list = [get_url(x[0]) for x in frappe.get_all("Item", filters=[["name", "in", items]], fields=["route"], as_list=1)]

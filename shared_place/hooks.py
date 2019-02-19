@@ -102,10 +102,10 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"shared_place.tasks.all"
-# 	],
+scheduler_events = {
+	"all": [
+		"shared_place.tasks.reset_draft_bookings"
+	]
 # 	"daily": [
 # 		"shared_place.tasks.daily"
 # 	],
@@ -118,7 +118,7 @@ doc_events = {
 # 	"monthly": [
 # 		"shared_place.tasks.monthly"
 # 	]
-# }
+}
 
 # Testing
 # -------

@@ -1,7 +1,8 @@
 <template>
 	<div>
+		<help-text :helpText="helpText"/>
 		<resource-selector v-if="this.isMobile()" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
-		<uom-section v-if="showCalendar()" :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
+		<uom-section v-if="!this.isMobile()" :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
 		<booking-dialog :booked="booked"/>
 	</div>
@@ -14,6 +15,7 @@
 	import BookingDialog from './BookingDialog.vue';
 	import UomSection from './UomSection.vue';
 	import resourceSelector from './resourceSelector.vue'
+	import helpText from './helpText.vue'
 
 	export default {
 		name: 'calendar',
@@ -21,15 +23,17 @@
 		components: {
 			BookingDialog,
 			UomSection,
-			resourceSelector
+			resourceSelector,
+			helpText
 		},
 		data () {
 			return {
 				events: [],
 				resources: [],
-				available_uoms: ["hour"],
-				uom: "hour",
-				selectedResource: {}
+				available_uoms: [],
+				uom: null,
+				selectedResource: {},
+				helpText: null
 			}
 		},
 		created() {
@@ -44,7 +48,7 @@
 		},
 		mounted() {
 			this.getUoms();
-			this.getResources();
+			this.getSettings(false);
 		},
 		computed: {
 			config() {
@@ -62,6 +66,12 @@
 					resourceGroupField: "category",
 					resources: (callback) => {
 						callback(this.resources);
+					},
+					resourceRender: function(resourceObj, labelTds, bodyTds) {
+						if (resourceObj.selected === 1) {
+							labelTds.css('font-weight', '600');
+							labelTds.css('background-color', '#d1d3fc')
+						}
 					},
 					events: (start, end, timezone, callback) => {
 						frappe.call({
@@ -96,18 +106,34 @@
 					timeFormat: 'H(:mm)',
 					noEventsMessage: __("No slot available"),
 					displayEventTime: false,
-					titleFormat: 'D MMMM YYYY'
+					titleFormat: 'D MMMM YYYY',
+					loading: function( isLoading, view ) {
+						if (isLoading) {
+							frappe.freeze();
+						} else {
+							frappe.unfreeze();
+						}
+					}
 				}
 				}
 		},
 		methods: {
 			getResources() {
+				let route;
+				if (window.location.href) {
+					route = new URL(window.location.href).searchParams.get("route")
+				} else {
+					route = null
+				}
 				frappe.call({
 					method: "shared_place.templates.pages.shared_place_calendar.get_rooms_and_resources",
+					args: {
+						'route': route
+					},
 					callback: (r) => {
 						this.resources = r.message;
 						if (!this.isMobile()) {
-							this.getSettings();
+							this.getSettings(true);
 						}
 					}
 				})
@@ -128,26 +154,35 @@
 					resource: res
 				})
 			},
-			getSettings() {
+			getSettings(cal) {
 				frappe.call({	
 					method: 'shared_place.templates.pages.shared_place_calendar.get_settings',
 					callback: (r) => {
-						this.$refs.calendar.fireMethod('option', {
+						this.helpText = r.message.calendar_help_text;
+
+						if (cal) {
+							this.$refs.calendar.fireMethod('option', {
 							'locale': r.message.lang,
 							'minTime': r.message.calendar_start_time,
 							'scrollTime': r.message.calendar_start_time,
 							'maxTime': r.message.calendar_end_time,
 							'slotDuration': (parseInt(r.message.minimum_booking_time) * 60).toString(),
 							'weekends': r.message.week_end_bookings
-							});
+						});
 						this.$refs.calendar.fireMethod('refetchResources');
 						this.$refs.calendar.$emit('refetch-events');
+						}
 					}
 				});
 			},
 			uomChanged(value) {
+				const oldValue = this.uom;
 				this.uom = value;
-				this.$refs.calendar.$emit('refetch-events');
+				if (oldValue === null) {
+					this.getResources();
+				} else {
+					this.$refs.calendar.$emit('refetch-events');
+				}
 			},
 			getUoms() {
 				frappe.call({
@@ -172,7 +207,11 @@
 						return false;
 					}
 				} else {
-					return true;
+					if (this.uom !== null) {
+						return true;
+					} else {
+						return false;
+					}
 				}
 			}
 		}

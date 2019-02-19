@@ -49,9 +49,6 @@ def get_list_context(context=None):
 	})
 
 def get_booking_list(doctype, txt, filters, limit_start, limit_page_length=20, order_by="modified"):
-	print(doctype)
-	print(txt)
-	print(filters)
 	return frappe.db.sql('''select name, title, booked_by, starts_on, ends_on, modified, route
 		from `tabShared Place Booking`
 		where docstatus = 1 and booked_by = %s

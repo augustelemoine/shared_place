@@ -30,7 +30,7 @@ frappe.ready(function() {
 
 	$('.product-link').on('click', function() {
 		if (window.redirects.includes(this.href)) {
-			this.href = "/shared_place_calendar"
+			this.href = "/shared_place_calendar?route=" + new URL(this.href).pathname
 		}
 	})
 
