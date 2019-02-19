@@ -37,14 +37,6 @@ class SharedPlaceConnector(CalendarConnector):
 			except Exception:
 				frappe.log_error(frappe.get_traceback(), "GCalendar Synchronization Error")
 
-def sync():
-	try:
-		gcalendar_settings = frappe.get_doc('GCalendar Settings')
-		if gcalendar_settings.enable == 1:
-			sync_accounts()
-	except Exception:
-		frappe.log_error(frappe.get_traceback())
-
 def sync_accounts():
 	frappe.has_permission('GCalendar Settings', throw=True)
 

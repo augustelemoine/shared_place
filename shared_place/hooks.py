@@ -104,7 +104,8 @@ doc_events = {
 
 scheduler_events = {
 	"all": [
-		"shared_place.tasks.reset_draft_bookings"
+		"shared_place.tasks.reset_draft_bookings",
+		"shared_place.tasks.calendar_sync"
 	]
 # 	"daily": [
 # 		"shared_place.tasks.daily"
