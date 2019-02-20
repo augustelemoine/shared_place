@@ -6,24 +6,30 @@ import frappe
 from datetime import datetime
 from frappe.utils.background_jobs import get_jobs
 import time
+import uuid
 
 class SharedPlaceConnector(CalendarConnector):
 	def __init__(self, connector):
 		super(SharedPlaceConnector, self).__init__(connector)
 
 	def insert(self, doctype, doc):
-		super(SharedPlaceConnector, self).insert(doctype, doc)
+		if doctype == 'Events':
+			return super(SharedPlaceConnector, self).insert(doctype, doc)
 		if doctype == 'Shared Place Events':
 			if doc["start_datetime"] >= datetime.now():
 				try:
+					frappe.log_error("Shared Place Booking", "Shared Place Booking")
 					doctype = "Shared Place Booking"
 					e = self.insert_events(doctype, doc)
 					return e
 				except Exception:
 					frappe.log_error(frappe.get_traceback(), "GCalendar Synchronization Error")
+			else:
+				return {"id": uuid.uuid4().hex}
 
 	def update(self, doctype, doc, migration_id):
-		super(SharedPlaceConnector, self).update(doctype, doc, migration_id)
+		if doctype == 'Events':
+			return super(SharedPlaceConnector, self).update(doctype, doc, migration_id)
 		if doctype == 'Shared Place Events':
 			if doc["start_datetime"] >= datetime.now() and migration_id is not None:
 				try:
@@ -33,7 +39,8 @@ class SharedPlaceConnector(CalendarConnector):
 					frappe.log_error(frappe.get_traceback(), "GCalendar Synchronization Error")
 
 	def delete(self, doctype, migration_id):
-		super(SharedPlaceConnector, self).delete(doctype, migration_id)
+		if doctype == 'Events':
+			return super(SharedPlaceConnector, self).delete(doctype, migration_id)
 		if doctype == 'Shared Place Events':
 			try:
 				return self.delete_events(migration_id)
@@ -49,7 +56,7 @@ def sync_accounts():
 	for account in accounts:
 		job_name = 'google_calendar_sp_sync|{0}'.format(account.name)
 		if job_name not in queued_jobs:
-			frappe.enqueue('shared_place.shared_place.gcalendar_connector.run_sync', queue='long', timeout=1500, job_name=job_name, account=account)
+			frappe.enqueue('shared_place.shared_place.shared_place_connector.run_sync', queue='long', timeout=1500, job_name=job_name, account=account)
 			time.sleep(5)
 
 def run_sync(account):
@@ -66,7 +73,7 @@ def run_sync(account):
 		doc = frappe.get_doc({
 			'doctype': 'Data Migration Run',
 			'data_migration_plan': 'GCalendar Shared Place Sync',
-			'data_migration_connector': 'Shared Place Calendar Connector-' + account.name
+			'data_migration_connector': 'Calendar Connector-' + account.name
 		}).insert()
 		try:
 			doc.run()

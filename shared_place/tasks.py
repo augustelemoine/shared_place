@@ -4,7 +4,7 @@
 from __future__ import unicode_literals, absolute_import
 import frappe
 import datetime
-from shared_place.shared_place.gcalendar_connector import sync_accounts
+from shared_place.shared_place.shared_place_connector import sync_accounts
 
 def reset_draft_bookings():
 	reset_period = frappe.db.get_value("Shared Place Settings", "Shared Place Settings", "booking_reset_period")
