@@ -9,7 +9,7 @@
    "mapping": "Shared Place Booking to GCalendar"
   }
  ],
- "modified": "2019-02-20 11:47:04.355426",
+ "modified": "2019-02-20 11:53:18.326301",
  "modified_by": "Administrator",
  "module": "Shared Place",
  "name": "GCalendar Shared Place Sync",

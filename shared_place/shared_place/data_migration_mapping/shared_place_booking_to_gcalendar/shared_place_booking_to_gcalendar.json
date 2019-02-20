@@ -25,11 +25,6 @@
   },
   {
    "is_child_table": 0,
-   "local_fieldname": "all_day",
-   "remote_fieldname": "all_day"
-  },
-  {
-   "is_child_table": 0,
    "local_fieldname": "name",
    "remote_fieldname": "name"
   }
@@ -40,7 +35,7 @@
  "mapping_name": "Shared Place Booking to GCalendar",
  "mapping_type": "Push",
  "migration_id_field": "gcalendar_shared_place_sync_id",
- "modified": "2019-02-20 11:47:04.389100",
+ "modified": "2019-02-20 11:53:18.356382",
  "modified_by": "Administrator",
  "name": "Shared Place Booking to GCalendar",
  "owner": "Administrator",
