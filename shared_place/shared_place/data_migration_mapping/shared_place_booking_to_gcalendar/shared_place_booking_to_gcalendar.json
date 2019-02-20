@@ -40,11 +40,11 @@
  "mapping_name": "Shared Place Booking to GCalendar",
  "mapping_type": "Push",
  "migration_id_field": "gcalendar_shared_place_sync_id",
- "modified": "2019-02-20 16:08:01.882847",
+ "modified": "2019-02-20 16:09:45.795452",
  "modified_by": "Administrator",
  "name": "Shared Place Booking to GCalendar",
  "owner": "Administrator",
  "page_length": 10,
- "remote_objectname": "Events",
+ "remote_objectname": "Shared Place Events",
  "remote_primary_key": "id"
 }

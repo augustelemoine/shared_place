@@ -13,7 +13,7 @@ class SharedPlaceConnector(CalendarConnector):
 
 	def insert(self, doctype, doc):
 		super(SharedPlaceConnector, self).insert(doctype, doc)
-		if doctype == 'Shared Place Booking':
+		if doctype == 'Shared Place Events':
 			if doc["start_datetime"] >= datetime.now():
 				try:
 					doctype = "Shared Place Booking"
@@ -24,7 +24,7 @@ class SharedPlaceConnector(CalendarConnector):
 
 	def update(self, doctype, doc, migration_id):
 		super(SharedPlaceConnector, self).update(doctype, doc, migration_id)
-		if doctype == 'Shared Place Booking':
+		if doctype == 'Shared Place Events':
 			if doc["start_datetime"] >= datetime.now() and migration_id is not None:
 				try:
 					doctype = "Shared Place Booking"
@@ -34,7 +34,7 @@ class SharedPlaceConnector(CalendarConnector):
 
 	def delete(self, doctype, migration_id):
 		super(SharedPlaceConnector, self).delete(doctype, migration_id)
-		if doctype == 'Shared Place Booking':
+		if doctype == 'Shared Place Events':
 			try:
 				return self.delete_events(migration_id)
 			except Exception:
