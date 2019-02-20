@@ -1,7 +1,7 @@
 # Copyright (c) 2019, Dokos and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import frappe
 import datetime
 from shared_place.shared_place.gcalendar_connector import sync_accounts

@@ -95,7 +95,7 @@ doc_events = {
 		"on_trash": "shared_place.shared_place.utils.on_quotation_delete"
 	},
 	"Data Migration Connector": {
-		"on_save": "shared_place.shared_place.utils.update_gcalendar_connector"
+		"validate": "shared_place.shared_place.utils.update_gcalendar_connector"
 	}
 }
 

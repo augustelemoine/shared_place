@@ -156,4 +156,4 @@ def on_quotation_delete(doc, method):
 
 def update_gcalendar_connector(doc, method):
 	if doc.python_module == "frappe.data_migration.doctype.data_migration_connector.connectors.calendar_connector":
-		doc.python_module = "shared_place.shared_place.gcalendar_connector"
+		doc.python_module = "shared_place.shared_place.shared_place_connector"

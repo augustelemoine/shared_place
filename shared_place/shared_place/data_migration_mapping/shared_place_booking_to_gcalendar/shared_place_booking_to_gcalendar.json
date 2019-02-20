@@ -1,17 +1,12 @@
 {
- "creation": "2019-02-13 15:29:17.490420",
+ "creation": "2019-02-13 15:29:43.025775",
  "docstatus": 0,
  "doctype": "Data Migration Mapping",
  "fields": [
   {
    "is_child_table": 0,
-   "local_fieldname": "subject",
+   "local_fieldname": "title",
    "remote_fieldname": "summary"
-  },
-  {
-   "is_child_table": 0,
-   "local_fieldname": "description",
-   "remote_fieldname": "description"
   },
   {
    "is_child_table": 0,
@@ -25,31 +20,31 @@
   },
   {
    "is_child_table": 0,
-   "local_fieldname": "all_day",
-   "remote_fieldname": "all_day"
-  },
-  {
-   "is_child_table": 0,
    "local_fieldname": "repeat_this_event",
    "remote_fieldname": "repeat_this_event"
   },
   {
    "is_child_table": 0,
-   "local_fieldname": "gcalendar_sync_id",
-   "remote_fieldname": "id"
+   "local_fieldname": "all_day",
+   "remote_fieldname": "all_day"
+  },
+  {
+   "is_child_table": 0,
+   "local_fieldname": "name",
+   "remote_fieldname": "name"
   }
  ],
  "idx": 0,
  "local_doctype": "Shared Place Booking",
  "local_primary_key": "gcalendar_sync_id",
- "mapping_name": "GCalendar to Shared Place Booking",
- "mapping_type": "Pull",
+ "mapping_name": "Shared Place Booking to GCalendar",
+ "mapping_type": "Push",
  "migration_id_field": "gcalendar_shared_place_sync_id",
- "modified": "2019-02-13 15:30:34.018529",
+ "modified": "2019-02-20 11:47:04.389100",
  "modified_by": "Administrator",
- "name": "GCalendar to Shared Place Booking",
+ "name": "Shared Place Booking to GCalendar",
  "owner": "Administrator",
- "page_length": 250,
+ "page_length": 10,
  "remote_objectname": "Events",
  "remote_primary_key": "id"
 }

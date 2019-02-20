@@ -8,6 +8,9 @@ from frappe.utils.background_jobs import get_jobs
 import time
 
 class SharedPlaceConnector(CalendarConnector):
+	def __init__(self, connector):
+		super(SharedPlaceConnector, self).__init__(connector)
+
 	def insert(self, doctype, doc):
 		super(SharedPlaceConnector, self).insert(doctype, doc)
 		if doctype == 'Shared Place Booking':
