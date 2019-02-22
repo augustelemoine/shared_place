@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<help-text :helpText="helpText"/>
-		<resource-selector v-if="this.isMobile()" :selectResource="selectResource" :resources="resources" :selectedResource="selectedResource"/>
-		<uom-section v-if="!this.isMobile()" :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
+		<resource-selector v-if="this.isMobile()" :selectResource="selectResource" :resources="selectableResources" :selectedResource="selectedResource"/>
+		<uom-section v-if="showUOMSection()" :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
 		<booking-dialog :booked="booked"/>
 	</div>
@@ -33,6 +33,7 @@
 				available_uoms: [],
 				uom: null,
 				selectedResource: {},
+				selectableResources: [],
 				helpText: null
 			}
 		},
@@ -49,6 +50,9 @@
 		mounted() {
 			this.getUoms();
 			this.getSettings(false);
+			if (this.isMobile()) {
+				this.getResources();
+			}
 		},
 		computed: {
 			config() {
@@ -132,6 +136,7 @@
 					},
 					callback: (r) => {
 						this.resources = r.message;
+						this.selectableResources = r.message.filter(f => f.selected === 1);
 						if (!this.isMobile()) {
 							this.getSettings(true);
 						}
@@ -201,7 +206,7 @@
 			},
 			showCalendar() {
 				if (this.isMobile()) {
-					if (Object.keys(this.selectedResource).length) {
+					if (Object.keys(this.selectedResource).length && this.uom !== null) {
 						return true;
 					} else {
 						return false;
@@ -212,6 +217,17 @@
 					} else {
 						return false;
 					}
+				}
+			},
+			showUOMSection() {
+				if (this.isMobile()) {
+					if (Object.keys(this.selectedResource).length) {
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return true;
 				}
 			}
 		}

@@ -43,7 +43,7 @@ class SharedPlaceBooking(WebsiteGenerator):
 def get_list_context(context=None):
 	context.update({
 		"show_sidebar": True,
-		"title": _("Shared Place Booking"),
+		"title": _("Bookings"),
 		"get_list": get_booking_list,
 		"row_template": "shared_place/doctype/shared_place_booking/templates/shared_place_booking_row.html"
 	})
@@ -52,7 +52,7 @@ def get_booking_list(doctype, txt, filters, limit_start, limit_page_length=20, o
 	return frappe.db.sql('''select name, title, booked_by, starts_on, ends_on, modified, route
 		from `tabShared Place Booking`
 		where docstatus = 1 and booked_by = %s
-		order by starts_on asc limit {0}, {1}
+		order by starts_on dsc limit {0}, {1}
 		'''.format(limit_start, limit_page_length), frappe.session.user, as_dict=1)
 
 def get_registered_slots(resource, date):

@@ -14,7 +14,7 @@
 			</div>
 			<div class="col-sm-3 small">
 				<span class="text-muted">
-					Starts on
+					{{ _("Starts on") }}
 				</span>
 				<div class="text-muted bold">
 					{{ frappe.utils.format_datetime(doc.starts_on, "medium") }}
@@ -22,7 +22,7 @@
 			</div>
 			<div class="col-sm-3 small">
 				<span class="text-muted">
-					Ends on
+					{{ _(Ends on) }}
 				</span>
 				<div class="bold">
 					{{ frappe.utils.format_datetime(doc.ends_on, "medium") }}

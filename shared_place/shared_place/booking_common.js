@@ -26,7 +26,7 @@ function check_if_item_price_exists(frm) {
 const prices_template = `
 	<div>
 	{% for row in data %}
-	<h2>{{ row.uom }} : <span>{{ row.price }}</span></h2>
+	<h2>{{ __(row.uom) }} : <span>{{ row.price }}</span></h2>
 	{% endfor%}
 	</div>
 `

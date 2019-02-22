@@ -18,7 +18,6 @@ class SharedPlaceConnector(CalendarConnector):
 		if doctype == 'Shared Place Events':
 			if doc["start_datetime"] >= datetime.now():
 				try:
-					frappe.log_error("Shared Place Booking", "Shared Place Booking")
 					doctype = "Shared Place Booking"
 					e = self.insert_events(doctype, doc)
 					return e

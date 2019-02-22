@@ -57,7 +57,7 @@ website_route_rules = [
 ]
 
 standard_portal_menu_items = [
-	{"title": _("Shared Place Booking"), "route": "/spbooking", "reference_doctype": "Shared Place Booking"},
+	{"title": _("Bookings"), "route": "/spbooking", "reference_doctype": "Shared Place Booking"},
 ]
 
 calendars = ["Shared Place Booking"]
