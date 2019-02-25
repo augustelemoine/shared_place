@@ -57,7 +57,7 @@
 		computed: {
 			config() {
 				return {
-					locale: 'fr',
+					locale: Vue.prototype.frappe.lang,
 					header: {
 						left: 'prev,next today',
 						center: this.isMobile() ? '' : 'title',

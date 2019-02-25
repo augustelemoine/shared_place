@@ -11,7 +11,7 @@ Calendar Start Time, Heure de début du calendrier
 Coworking Space, Espace de coworking
 Coworking Spaces, Espaces de coworking
 Custom Schedule, Calendrier spécifique
-Default Booking Schedule, Calendrier de réservation par défault
+Default Booking Schedule, Calendrier de réservation par défaut
 Default Schedule, Calendrier par défaut
 Full-day booking, Réservations à la journée
 Full-day schedule, Calendrier à la journée
@@ -55,3 +55,7 @@ Full-day, Journée
 Starts on, Démarre à
 Ends on, Termine à
 Bookings, Réservations
+The minimum period is 3 minutes., La période minimum est de 3 minutes.
+Room Name, Nom de la salle
+Room, Salle
+Booking Reset Period (mins),Période avant réinitialisation de la réservation (mins)

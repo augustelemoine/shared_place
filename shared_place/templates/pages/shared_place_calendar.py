@@ -49,10 +49,11 @@ def get_rooms_and_resources(route=None):
 
 @frappe.whitelist(allow_guest=True)
 def get_uoms():
+	default_uom = frappe.db.get_value("Shared Place Settings", None, "default_uom")
 	half_day = frappe.db.get_value("Shared Place Settings", None, "half_day_booking")
 	full_day = frappe.db.get_value("Shared Place Settings", None, "full_day_booking")
 
-	result = {'hour': _("Hour")}
+	result = {'hour': _(default_uom)}
 	if half_day and int(half_day) == 1:
 		result.update({'halfday': _("Half-day")})
 	if full_day and int(full_day) == 1:
