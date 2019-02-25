@@ -1,0 +1,630 @@
+<!-- title: Shared Place Booking -->
+<!-- add-breadcrumbs -->
+
+
+
+
+
+<h1>Shared Place Booking</h1>
+<div class="dev-header">
+
+<a class="btn btn-default btn-sm" disabled style="margin-bottom: 10px;">
+	Version 1.0.0alpha</a>
+
+
+	<a class="btn btn-default btn-sm" href="https://github.com/dokos-io/shared_place/tree/develop/shared_place/shared_place/doctype/shared_place_booking"
+		target="_blank" style="margin-left: 10px; margin-bottom: 10px;"><i class="octicon octicon-mark-github"></i> Source</a>
+
+</div>
+
+
+
+
+
+    <p><b>Table Name:</b> <code>tabShared Place Booking</code></p>
+
+
+
+
+<h3>Fields</h3>
+
+<table class="table table-bordered docfields">
+    <thead>
+        <tr>
+            <th style="width: 5%">Sr</th>
+            <th style="width: 25%">Fieldname</th>
+            <th style="width: 20%">Type</th>
+            <th style="width: 25%">Label</th>
+            <th style="width: 25%">Options</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        <tr >
+            <td>1</td>
+            <td ><code>naming_series</code></td>
+            <td >
+                Select</td>
+            <td class="text-muted" title="Hidden">
+                Naming Series
+                
+            </td>
+            <td>
+                <pre>RES-</pre>
+            </td>
+        </tr>
+        
+        <tr >
+            <td>2</td>
+            <td class="danger" title="Mandatory"><code>title</code></td>
+            <td >
+                Data</td>
+            <td >
+                Title
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>3</td>
+            <td class="danger" title="Mandatory"><code>booking_type</code></td>
+            <td >
+                Link</td>
+            <td >
+                Booking Type
+                
+            </td>
+            <td>
+                
+                
+
+
+<a href="/docs/current/models/core/doctype">DocType</a>
+
+
+                
+            </td>
+        </tr>
+        
+        <tr >
+            <td>4</td>
+            <td class="danger" title="Mandatory"><code>booked_resource</code></td>
+            <td >
+                Dynamic Link</td>
+            <td >
+                Room/Resource
+                
+            </td>
+            <td>
+                <pre>booking_type</pre>
+            </td>
+        </tr>
+        
+        <tr >
+            <td>5</td>
+            <td class="danger" title="Mandatory"><code>booked_by</code></td>
+            <td >
+                Link</td>
+            <td >
+                Booked by
+                
+            </td>
+            <td>
+                
+                
+
+
+<a href="/docs/current/models/core/user">User</a>
+
+
+                
+            </td>
+        </tr>
+        
+        <tr >
+            <td>6</td>
+            <td ><code>option</code></td>
+            <td >
+                Data</td>
+            <td >
+                Option
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>7</td>
+            <td ><code>repeat_this_event</code></td>
+            <td >
+                Check</td>
+            <td >
+                Repeat this Event
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>8</td>
+            <td ><code>column_break_4</code></td>
+            <td class="info">
+                Column Break</td>
+            <td >
+                
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>9</td>
+            <td class="danger" title="Mandatory"><code>starts_on</code></td>
+            <td >
+                Datetime</td>
+            <td >
+                Starts on
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>10</td>
+            <td ><code>ends_on</code></td>
+            <td >
+                Datetime</td>
+            <td >
+                Ends on
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>11</td>
+            <td ><code>linked_booking</code></td>
+            <td >
+                Link</td>
+            <td >
+                Linked Booking
+                
+            </td>
+            <td>
+                
+                
+
+
+<a href="/docs/current/models/shared_place/shared_place_booking">Shared Place Booking</a>
+
+
+                
+            </td>
+        </tr>
+        
+        <tr class="info">
+            <td>12</td>
+            <td ><code>section_break_13</code></td>
+            <td >
+                Section Break</td>
+            <td >
+                
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>13</td>
+            <td ><code>repeat_on</code></td>
+            <td >
+                Select</td>
+            <td >
+                Repeat On
+                
+            </td>
+            <td>
+                <pre>
+Every Day
+Every Week
+Every Month
+Every Year</pre>
+            </td>
+        </tr>
+        
+        <tr >
+            <td>14</td>
+            <td ><code>repeat_till</code></td>
+            <td >
+                Date</td>
+            <td >
+                Repeat Till
+                <p class="text-muted small">
+                    Leave blank to repeat always</p>
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>15</td>
+            <td ><code>column_break_16</code></td>
+            <td class="info">
+                Column Break</td>
+            <td >
+                
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>16</td>
+            <td ><code>monday</code></td>
+            <td >
+                Check</td>
+            <td >
+                Monday
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>17</td>
+            <td ><code>tuesday</code></td>
+            <td >
+                Check</td>
+            <td >
+                Tuesday
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>18</td>
+            <td ><code>wednesday</code></td>
+            <td >
+                Check</td>
+            <td >
+                Wednesday
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>19</td>
+            <td ><code>thursday</code></td>
+            <td >
+                Check</td>
+            <td >
+                Thursday
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>20</td>
+            <td ><code>friday</code></td>
+            <td >
+                Check</td>
+            <td >
+                Friday
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>21</td>
+            <td ><code>saturday</code></td>
+            <td >
+                Check</td>
+            <td >
+                Saturday
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>22</td>
+            <td ><code>sunday</code></td>
+            <td >
+                Check</td>
+            <td >
+                Sunday
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr class="info">
+            <td>23</td>
+            <td ><code>section_break_8</code></td>
+            <td >
+                Section Break</td>
+            <td >
+                
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>24</td>
+            <td ><code>color</code></td>
+            <td >
+                Color</td>
+            <td >
+                Color
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr class="info">
+            <td>25</td>
+            <td ><code>section_break_6</code></td>
+            <td >
+                Section Break</td>
+            <td >
+                
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>26</td>
+            <td ><code>notes</code></td>
+            <td >
+                Text Editor</td>
+            <td >
+                Notes
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr class="info">
+            <td>27</td>
+            <td ><code>invoicing_section</code></td>
+            <td >
+                Section Break</td>
+            <td >
+                Invoicing
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>28</td>
+            <td ><code>quotation</code></td>
+            <td >
+                Link</td>
+            <td >
+                Quotation
+                
+            </td>
+            <td>
+                
+                
+
+
+<a href="/docs/current/models/selling/quotation">Quotation</a>
+
+
+                
+            </td>
+        </tr>
+        
+        <tr >
+            <td>29</td>
+            <td ><code>column_break_27</code></td>
+            <td class="info">
+                Column Break</td>
+            <td >
+                
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>30</td>
+            <td ><code>sales_order</code></td>
+            <td >
+                Link</td>
+            <td >
+                Sales Order
+                
+            </td>
+            <td>
+                
+                
+
+
+<a href="/docs/current/models/selling/sales_order">Sales Order</a>
+
+
+                
+            </td>
+        </tr>
+        
+        <tr >
+            <td>31</td>
+            <td ><code>amended_from</code></td>
+            <td >
+                Link</td>
+            <td >
+                Amended From
+                
+            </td>
+            <td>
+                
+                
+
+
+<a href="/docs/current/models/shared_place/shared_place_booking">Shared Place Booking</a>
+
+
+                
+            </td>
+        </tr>
+        
+        <tr class="info">
+            <td>32</td>
+            <td ><code>web_view_section</code></td>
+            <td >
+                Section Break</td>
+            <td >
+                Web View
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>33</td>
+            <td ><code>route</code></td>
+            <td >
+                Data</td>
+            <td >
+                route
+                
+            </td>
+            <td></td>
+        </tr>
+        
+        <tr >
+            <td>34</td>
+            <td ><code>hash</code></td>
+            <td >
+                Data</td>
+            <td class="text-muted" title="Hidden">
+                Hash
+                
+            </td>
+            <td></td>
+        </tr>
+        
+    </tbody>
+</table>
+
+
+    <hr>
+    <h3>Controller</h3>
+    <h4>shared_place.shared_place.doctype.shared_place_booking.shared_place_booking</h4>
+
+    
+
+
+
+	
+        
+	<h3 style="font-weight: normal;">Class <b>SharedPlaceBooking</b></h3>
+    
+    <p style="padding-left: 30px;"><i>Inherits from frappe.website.website_generator.WebsiteGenerator</i></h4>
+    
+    <div class="docs-attr-desc"><p></p>
+</div>
+    <div style="padding-left: 30px;">
+        
+    </div>
+    <hr>
+
+	
+
+	
+        
+    
+    
+	<p class="docs-attr-name">
+        <a name="shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_booking_list" href="#shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_booking_list" class="text-muted small">
+            <i class="fa fa-link small" style="color: #ccc;"></i></a>
+		shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.<b>get_booking_list</b>
+        <i class="text-muted">(doctype, txt, filters, limit_start, limit_page_length=20, order_by=modified)</i>
+    </p>
+	<div class="docs-attr-desc"><p><span class="text-muted">No docs</span></p>
+</div>
+	<br>
+
+	
+
+	
+        
+    
+    <p><span class="label label-info">Public API</span>
+        <br><code>/api/method/shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_events</code>
+    </p>
+	<p class="docs-attr-name">
+        <a name="shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_events" href="#shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_events" class="text-muted small">
+            <i class="fa fa-link small" style="color: #ccc;"></i></a>
+		shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.<b>get_events</b>
+        <i class="text-muted">(start, end, filters=None)</i>
+    </p>
+	<div class="docs-attr-desc"><p><span class="text-muted">No docs</span></p>
+</div>
+	<br>
+
+	
+
+	
+        
+    
+    
+	<p class="docs-attr-name">
+        <a name="shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_list_context" href="#shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_list_context" class="text-muted small">
+            <i class="fa fa-link small" style="color: #ccc;"></i></a>
+		shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.<b>get_list_context</b>
+        <i class="text-muted">(context=None)</i>
+    </p>
+	<div class="docs-attr-desc"><p><span class="text-muted">No docs</span></p>
+</div>
+	<br>
+
+	
+
+	
+        
+    
+    
+	<p class="docs-attr-name">
+        <a name="shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_registered_slots" href="#shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.get_registered_slots" class="text-muted small">
+            <i class="fa fa-link small" style="color: #ccc;"></i></a>
+		shared_place.shared_place.doctype.shared_place_booking.shared_place_booking.<b>get_registered_slots</b>
+        <i class="text-muted">(resource, date)</i>
+    </p>
+	<div class="docs-attr-desc"><p><span class="text-muted">No docs</span></p>
+</div>
+	<br>
+
+	
+
+
+    
+    
+        <h4>Linked In:</h4>
+        <ul>
+        
+			
+            <li>
+
+
+<a href="/docs/current/models/shared_place/shared_place_booking">Shared Place Booking</a>
+
+</li>
+			
+        
+        </ul>
+    
+
+
+<!-- autodoc -->
+<!-- jinja -->
+<!-- static -->
