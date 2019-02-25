@@ -6,7 +6,6 @@
 	"js/shared-place-calendar.js": [
 		"public/js/event_emitter.js",
 		"public/js/website_calendar/shared_place_calendar.js",
-		"public/js/website_calendar/SharedPlaceCalendar.vue",
-		"public/js/website_calendar/components/Calendar.vue"
+		"public/js/website_calendar/SharedPlaceCalendar.vue"
 	]
 }

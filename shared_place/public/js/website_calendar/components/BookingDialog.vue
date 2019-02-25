@@ -7,7 +7,7 @@
 				<h3 class="bookpage-resource">{{ resource.title }}</h3>
 			</div>
 			<div class="bookpage-section">
-				<span class="blue">{{ __("Add or remove an hour") }}</span>
+				<span class="blue">{{ __("Add or remove a slot") }}</span>
 				<div class="input-group number-spinner">
 					<span class="input-group-btn">
 						<button class="btn btn-default cart-btn" @click="removeQty">–</button>

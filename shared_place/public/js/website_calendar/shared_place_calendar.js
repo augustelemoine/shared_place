@@ -15,6 +15,25 @@ if (!window.Vue) {
 }
 
 frappe.ready(function() {
+	frappe.call({
+		method: "shared_place.get_website_user_lang",
+		freeze: true,
+		callback: function(r) {
+			window.frappe.lang = r.message
+			if (window.frappe.lang == 'fr') {
+				Vue.prototype.frappe._messages = {
+					'Rooms/Resources': 'Salles/Ressources',
+					'No slot available': 'Aucun créneau disponible',
+					'Add or remove a slot': 'Ajoutez ou supprimez un créneau',
+					'Select an option': 'Sélectionnez une option',
+					'Close': 'Fermer',
+					'Add to cart': 'ajouter au panier',
+					'Resource Type': 'Type de ressource'
+				}
+			}
+		}
+	})
+
 	new Vue({
 		el: '#mainview',
 		template: "<SharedPlaceCalendar/>",
