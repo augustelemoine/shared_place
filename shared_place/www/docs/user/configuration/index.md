@@ -31,7 +31,7 @@ Chaque unité de mesure dispose de son propre calendrier de réservation par dé
 __Calendrier de réservation par défaut__
 
 C'est le calendrier standard de votre Tiers Lieux. Ajoutez-y les créneaux pendant lesquels les réservations sur votre plateforme peuvent être ouverts.  
-<img src="/docs/assets/default_calendar.png" class="screenshot">
+<img src="/shared_place/assets/default_calendar.png" class="screenshot">
 
 Choisissez ensuite l'unité de mesure par défaut pour vos réservations. Dans 99% des cas il s'agira de l'unité "Heure".  
 Vous pouvez également créer une nouvelle unité de mesure si celle-ci n'existe pas.  
@@ -42,7 +42,7 @@ __Réservation à la demi-journée/journée__
 
 Si vous souhaitez autoriser également les réservations à la demi-journée ou à la journée, cochez l'option correspondante et ajoutez un les créneaux correspondants aux demi-journées ou aux journée dans le calendrier.  
 Sélectionnez également l'unité de mesure correspondant à chaque option.  
-<img src="/docs/assets/half_day_calendar.png" class="screenshot">
+<img src="/shared_place/assets/half_day_calendar.png" class="screenshot">
   
 
 ### Salle (Shared Place Room)
@@ -57,7 +57,7 @@ Vous pouvez également voir les prix correspondants à votre salle en cliquant s
 
 Vous avez également la possibilité de définir plusieurs options, chaque option étant liée à un article spécifique et donc à un prix spécifique.
 Exemple: Vous voulez définir des prix différents en fonction du nombre de personnes réservant la salle, vous pouvez ajouter deux lignes correspondant à vos deux options de facturation.  
-<img src="/docs/assets/room_options.png" class="screenshot">  
+<img src="/shared_place/assets/room_options.png" class="screenshot">  
 
 
 Une fois vos articles sélectionnés et vos prix ajoutés, vous pouvez ouvrir votre salle à la réservation.
