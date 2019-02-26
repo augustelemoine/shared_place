@@ -19,8 +19,8 @@ frappe.ready(function() {
 		method: "shared_place.get_website_user_lang",
 		freeze: true,
 		callback: function(r) {
-			window.frappe.lang = r.message
-			if (window.frappe.lang == 'fr') {
+			Vue.prototype.frappe.lang = r.message
+			if (Vue.prototype.frappe.lang == 'fr') {
 				Vue.prototype.frappe._messages = {
 					'Rooms/Resources': 'Salles/Ressources',
 					'No slot available': 'Aucun créneau disponible',

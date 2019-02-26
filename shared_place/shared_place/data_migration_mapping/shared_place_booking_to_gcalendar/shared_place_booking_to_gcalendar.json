@@ -20,6 +20,11 @@
   },
   {
    "is_child_table": 0,
+   "local_fieldname": "booked_resource",
+   "remote_fieldname": "description"
+  },
+  {
+   "is_child_table": 0,
    "local_fieldname": "repeat_this_event",
    "remote_fieldname": "repeat_this_event"
   },
@@ -40,7 +45,7 @@
  "mapping_name": "Shared Place Booking to GCalendar",
  "mapping_type": "Push",
  "migration_id_field": "gcalendar_shared_place_sync_id",
- "modified": "2019-02-20 16:09:45.795452",
+ "modified": "2019-02-26 15:00:28.189666",
  "modified_by": "Administrator",
  "name": "Shared Place Booking to GCalendar",
  "owner": "Administrator",

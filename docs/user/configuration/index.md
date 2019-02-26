@@ -59,6 +59,9 @@ Vous avez également la possibilité de définir plusieurs options, chaque optio
 Exemple: Vous voulez définir des prix différents en fonction du nombre de personnes réservant la salle, vous pouvez ajouter deux lignes correspondant à vos deux options de facturation.  
 <img src="/shared_place/assets/room_options.png" class="screenshot">  
 
+__Attention__: Les articles liés à ce module doivent être des article non stockés.
+Pensez également à autoriser un article à être ajouté plusieurs fois dans une transaction dans les paramètres de vente.
+
 
 Une fois vos articles sélectionnés et vos prix ajoutés, vous pouvez ouvrir votre salle à la réservation.
 Si celle-ci suit un calendrier différent du calendrier standard configuré dans les paramètres, créez un calendrier spécifique.
