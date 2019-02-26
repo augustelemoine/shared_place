@@ -28,7 +28,8 @@ frappe.ready(function() {
 					'Select an option': 'Sélectionnez une option',
 					'Close': 'Fermer',
 					'Add to cart': 'ajouter au panier',
-					'Resource Type': 'Type de ressource'
+					'Resource Type': 'Type de ressource',
+					'Buy units without selecting a slot': 'Acheter des unités sans sélectionner un créneau'
 				}
 			}
 		}

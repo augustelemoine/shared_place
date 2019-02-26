@@ -38,11 +38,14 @@ def get_rooms_and_resources(route=None):
 
 	if route:
 		selected_items = [x['name'] for x in frappe.get_all("Item", filters=[['show_in_website', '=', 1], ['route', '=', route[1:]]])]
+		all_items = frappe.get_all("Item", filters=[['show_in_website', '=', 1]], fields=["name", "description"])
 		for r in result:
 			if r["item"] in selected_items:
 				r["selected"] = 1
 			else:
 				r["selected"] = 0
+
+			r["description"] = [d["description"] for d in all_items if d['name'] == r["item"]][0]
 
 	return result
 

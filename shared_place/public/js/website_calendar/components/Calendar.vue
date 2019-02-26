@@ -5,6 +5,9 @@
 		<uom-section v-if="showUOMSection()" :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
 		<booking-dialog :booked="booked"/>
+		<div class="text-center">
+			<a v-if="this.route!==null" :href="route">{{ __("Buy units without selecting a slot") }}</a>
+		</div>
 	</div>
 </template>
 
@@ -34,7 +37,8 @@
 				uom: null,
 				selectedResource: {},
 				selectableResources: [],
-				helpText: null
+				helpText: null,
+				route: null
 			}
 		},
 		created() {
@@ -76,6 +80,13 @@
 							labelTds.css('font-weight', '600');
 							labelTds.css('background-color', '#d1d3fc')
 						}
+						labelTds.eq(0).find('.fc-cell-content').popover({
+								title: resourceObj.id,
+								content: resourceObj.description,
+								trigger: 'hover',
+								placement: 'bottom',
+								container: 'body'
+							});
 					},
 					events: (start, end, timezone, callback) => {
 						frappe.call({
@@ -123,16 +134,13 @@
 		},
 		methods: {
 			getResources() {
-				let route;
 				if (window.location.href) {
-					route = new URL(window.location.href).searchParams.get("route")
-				} else {
-					route = null
+					this.route = new URL(window.location.href).searchParams.get("route")
 				}
 				frappe.call({
 					method: "shared_place.templates.pages.shared_place_calendar.get_rooms_and_resources",
 					args: {
-						'route': route
+						'route': this.route
 					},
 					callback: (r) => {
 						this.resources = r.message;
