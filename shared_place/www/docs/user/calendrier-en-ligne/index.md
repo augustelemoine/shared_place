@@ -64,4 +64,10 @@ A ce stade, l'annulation n'est plus possible et l'utilisateur peut voir le bon d
 Il peut également voir les réservations qu'il a faite dans son compte, sous la rubrique "Réservations".
 
 
+**Alternative**
+Si l'utilisateur souhaite acheter des unités sans sélectionner de créneau spécifique, il peut cliquer sur le bouton "Acheter des unités sans sélectionner un créneau" sous le calendrier pour être redirigé vers l'interface d'achat classique d'ERPNext.
+<img src="/shared_place/assets/buy_units.png" class="screenshot">
+
+L'unité de vente est celle définie dans les paramètres de vente de l'article.
+
 <!-- markdown -->
