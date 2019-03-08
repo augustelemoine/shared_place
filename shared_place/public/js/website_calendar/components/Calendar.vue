@@ -3,11 +3,11 @@
 		<help-text :helpText="helpText"/>
 		<resource-selector v-if="this.isMobile()" :selectResource="selectResource" :resources="selectableResources" :selectedResource="selectedResource"/>
 		<uom-section v-if="showUOMSection()" :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
-		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
-		<booking-dialog :booked="booked"/>
 		<div class="text-center">
 			<a v-if="this.route!==null" :href="route">{{ __("Buy units without selecting a slot") }}</a>
 		</div>
+		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
+		<booking-dialog :booked="booked"/>
 	</div>
 </template>
 
@@ -57,6 +57,9 @@
 			if (this.isMobile()) {
 				this.getResources();
 			}
+			if (window.location.href) {
+				this.route = new URL(window.location.href).searchParams.get("route")
+			}
 		},
 		computed: {
 			config() {
@@ -78,7 +81,7 @@
 					resourceRender: function(resourceObj, labelTds, bodyTds) {
 						if (resourceObj.selected === 1) {
 							labelTds.css('font-weight', '600');
-							labelTds.css('background-color', '#d1d3fc')
+							labelTds.css('background-color', '#d1d3fc');
 						}
 						labelTds.eq(0).find('.fc-cell-content').popover({
 								title: resourceObj.id,
@@ -98,10 +101,27 @@
 								'resources': this.isMobile() ? (Object.keys(this.selectedResource).length ? [this.selectedResource] : []) : this.resources
 							},
 							callback: (r) => {
-								this.events = r.message;
+								if (r.message.length) {
+									this.events = r.message;
+								} else {
+									this.events = [
+										{
+											end: end,
+											start: start,
+											title: __("No slot available"),
+											rendering: "background",
+											backgroundColor: "#FBFBFB"
+										}
+									]
+								}
 								callback(this.events)
 							}
 						})
+					},
+					eventRender: function (event, element) {
+						if (event.rendering == 'background') {
+							element.append(`<div class="no-events">${event.title}</div>`);
+						}
 					},
 					eventClick: (event) => {
 						this.showBookingDialog(event)
@@ -134,9 +154,6 @@
 		},
 		methods: {
 			getResources() {
-				if (window.location.href) {
-					this.route = new URL(window.location.href).searchParams.get("route")
-				}
 				frappe.call({
 					method: "shared_place.templates.pages.shared_place_calendar.get_rooms_and_resources",
 					args: {
@@ -243,4 +260,19 @@
 
 </script>
 
-<style></style>
+<style>
+
+.fc-bgevent {
+	text-align: center;
+	opacity: 0.8;
+}
+
+.no-events {
+	margin-top: 15%;
+	width: 100px;
+	height: 100px;
+	display: inline-block;
+	opacity: 90%;
+}
+
+</style>
