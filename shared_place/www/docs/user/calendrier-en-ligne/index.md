@@ -16,6 +16,9 @@ Chaque article sont liés à un groupe d'article et celui-ci doit être autoris�
 2. Allez dans les articles liés aux salles/espaces de coworking/ressources et cochez "Show in Website"
 <img src="/shared_place/assets/item_config.png" class="screenshot">
 
+__Attention__: ERPNext génère automatiquement une URL sur le site web dans le champ "route".
+Cette URL ne doit contenir aucun accent. Vous pouvez la modifier pour supprimer les accents si nécessaires.
+
 3. Dans les paramètres du panier, activez l'achat d'articles via le site web
   Vous pouvez activer la caisse si vous souhaitez que les utilisateurs paient depuis le site e-commerce.
 
