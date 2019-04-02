@@ -54,11 +54,11 @@
 		mounted() {
 			this.getUoms();
 			this.getSettings(false);
-			if (this.isMobile()) {
-				this.getResources();
-			}
 			if (window.location.href) {
 				this.route = new URL(window.location.href).searchParams.get("route")
+			}
+			if (this.isMobile()) {
+				this.getResources();
 			}
 		},
 		computed: {
@@ -143,6 +143,7 @@
 					noEventsMessage: __("No slot available"),
 					displayEventTime: false,
 					titleFormat: 'D MMMM YYYY',
+					slotLabelFormat: Vue.prototype.frappe.lang == 'fr' ? 'H:mm' : 'h(:mm)a',
 					loading: function( isLoading, view ) {
 						if (isLoading) {
 							frappe.freeze();
@@ -158,7 +159,7 @@
 				frappe.call({
 					method: "shared_place.templates.pages.shared_place_calendar.get_rooms_and_resources",
 					args: {
-						'route': this.route
+						'route': this.route || new URL(window.location.href).searchParams.get("route")
 					},
 					callback: (r) => {
 						this.resources = r.message;
