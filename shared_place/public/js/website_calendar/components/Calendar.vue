@@ -7,7 +7,7 @@
 			<a v-if="this.route!==null" :href="route">{{ __("Buy units without selecting a slot") }}</a>
 		</div>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
-		<booking-dialog :booked="booked"/>
+		<booking-dialog :booked="booked" :uom="uom"/>
 	</div>
 </template>
 
@@ -84,11 +84,12 @@
 							labelTds.css('background-color', '#d1d3fc');
 						}
 						labelTds.eq(0).find('.fc-cell-content').popover({
+								html: true,
 								title: resourceObj.id,
 								content: resourceObj.description,
 								trigger: 'hover',
 								placement: 'bottom',
-								container: 'body'
+								container: 'body',
 							});
 					},
 					events: (start, end, timezone, callback) => {

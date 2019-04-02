@@ -299,16 +299,18 @@ def get_booked_items():
 	return items
 
 @frappe.whitelist(allow_guest=True)
-def get_slot_price(item_code, qty, price_list=None):
+def get_slot_price(item_code, qty, uom, price_list=None):
 	from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
-	from erpnext.utilities.product import get_price
+	from shared_place.shared_place.utils import get_price, get_sp_uom
 
 	settings = get_shopping_cart_settings()
 
 	if not price_list:
 		price_list = settings.price_list
 
-	price = get_price(item_code, price_list, settings.default_customer_group, settings.company, qty)
+	uom = get_sp_uom(uom)
+
+	price = get_price(item_code, price_list, uom, settings.default_customer_group, settings.company, qty)
 	return fmt_money(float(price.price_list_rate) * float(qty), currency=price.currency)
 
 @frappe.whitelist()

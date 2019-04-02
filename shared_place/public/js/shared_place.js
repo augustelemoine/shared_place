@@ -11,7 +11,7 @@ frappe.ready(function() {
 			if (window.frappe.lang == 'fr') {
 				window.frappe._messages = {
 					'Cart': 'Panier',
-					'Remove all items: {0}': 'Supprimer tous les articles: {0}'
+					'Remove items: {0}': 'Supprimer les articles: {0}'
 				}
 			}
 		}
@@ -69,7 +69,7 @@ function change_default_btn() {
 		window.calendar_items.forEach(item => {
 			let $btnWrapper = $('body').find(`[data-item-code="${item}"]`).parent();
 			$btnWrapper.removeClass("number-spinner");
-			let btnText = __("Remove all items: {0}", [item])
+			let btnText = __("Remove items: {0}", [item])
 			$btnWrapper.html(`<button class="btn btn-xs sp-remove-btn" data-item-code="${item}">${btnText}</button>`);
 		})
 	}

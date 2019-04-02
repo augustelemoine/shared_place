@@ -16,7 +16,7 @@ def check_pricing(doc):
 	doc = json.loads(doc)
 	settings = frappe.get_doc("Shared Place Settings", None)
 
-	if doc["several_options"] == 0:
+	if not "several_options" in doc or doc["several_options"] == 0:
 		items = [doc["item"]]
 	else:
 		items = [x["item"] for x in doc["options_items"]]

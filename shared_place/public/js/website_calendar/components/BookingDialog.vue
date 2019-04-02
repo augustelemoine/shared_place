@@ -46,7 +46,7 @@ import moment from 'moment';
 
 export default {
 	name: 'BookingDialog',
-	props: ['booked'],
+	props: ['booked', 'uom'],
 	data () {
 		return {
 			date: null,
@@ -99,12 +99,13 @@ export default {
 			erpnext.shopping_cart.update_cart({
 				item_code: this.item,
 				qty: this.qty,
+				with_items: this.uom,
 				callback: function(r) {
 					if ('room' in me.resource && me.resource.room !== null) {
 						erpnext.shopping_cart.update_cart({
 							item_code: me.resource.room_item,
 							qty: me.qty,
-							hash: me.hash,
+							with_items: this.uom,
 							callback: function(r) {
 								me.$modal.hide('booking-dialog');
 							}
@@ -157,7 +158,8 @@ export default {
 				args: {
 					"item_code": this.item,
 					"price_list": this.resource.price_list,
-					"qty": this.qty
+					"qty": this.qty,
+					"uom": this.uom
 				},
 				callback: (r) => {
 					this.price = r.message;
