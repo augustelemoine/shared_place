@@ -143,7 +143,14 @@
 					noEventsMessage: __("No slot available"),
 					displayEventTime: false,
 					titleFormat: 'D MMMM YYYY',
-					slotLabelFormat: Vue.prototype.frappe.lang == 'fr' ? 'H:mm' : 'h(:mm)a',
+					views: {
+						timelineDay: {
+							 slotLabelFormat: [
+								'ddd D/M',
+								'H:mm'
+							]
+						}
+					},
 					loading: function( isLoading, view ) {
 						if (isLoading) {
 							frappe.freeze();

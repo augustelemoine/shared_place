@@ -70,7 +70,7 @@ function change_default_btn() {
 			let $btnWrapper = $('body').find(`[data-item-code="${item}"]`).parent();
 			$btnWrapper.removeClass("number-spinner");
 			let btnText = __("Remove items: {0}", [item])
-			$btnWrapper.html(`<button class="btn btn-xs sp-remove-btn" data-item-code="${item}">${btnText}</button>`);
+			$btnWrapper.html(`<button class="btn btn-xs sp-remove-btn" data-item-code="${item}" style="white-space: normal; overflow-wrap: break-word;">${btnText}</button>`);
 		})
 	}
 }
