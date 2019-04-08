@@ -137,6 +137,7 @@ export default {
 		},
 		removeQty() {
 			if (this.qty > 1) {
+				this.qtyFactor.pop();
 				this.qty -= 1;
 			}
 		},
