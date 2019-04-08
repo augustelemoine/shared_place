@@ -211,7 +211,6 @@ def get_price(item_code, price_list, uom, customer_group, company, qty=1):
 			return price_obj
 
 def get_sp_uom(name):
-	print(name)
 	if name == "halfday":
 		uom = frappe.db.get_value("Shared Place Settings", None, "half_day_uom")
 	elif name == "fullday":

@@ -59,12 +59,14 @@ export default {
 			resource: {},
 			price: null,
 			selectedOption: {},
-			item: null
+			item: null,
+			qtyFactor: []
 		}
 	},
 	watch: {
 		qty: function(val) {
-			this.end_time = moment(this.start_time).add(val, 'hours');
+			const numberOfHours =  this.qtyFactor.reduce((partial_sum, a) => partial_sum + a);
+			this.end_time = moment(this.start_time).add(numberOfHours, 'hours');
 			this.getPrice();
 		} 
 	},
@@ -82,6 +84,9 @@ export default {
 			this.doctype = event.params.doctype;
 			this.events = event.params.events;
 			this.qty = 1;
+			let duration = moment.duration(this.end_time.diff(this.start_time));
+			this.qtyFactor = [duration.asHours()];
+
 			if (Object.keys(this.resource.options).length) {
 				this.selectedOption = this.resource.options[0]
 				this.item = this.resource.options[0].item;
@@ -137,6 +142,10 @@ export default {
 		},
 		addQty() {
 			if (this.events.filter((e) => { return e.start===this.end_time.toISOString() }).length > 0) {
+				let newSlot = this.events.filter((e) => { return e.start===this.end_time.toISOString() })
+				let duration = moment.duration(moment(newSlot[0].end).diff(moment(newSlot[0].start)));
+				this.qtyFactor.push(duration.asHours());
+
 				this.qty += 1;
 			}
 		},
