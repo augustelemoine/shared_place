@@ -24,7 +24,7 @@ frappe.ready(function() {
 				Vue.prototype.frappe._messages = {
 					'Rooms/Resources': 'Salles/Ressources',
 					'No slot available': 'Aucun créneau disponible',
-					'Add or remove a slot': 'Ajoutez ou supprimez un créneau',
+					'Add or remove': 'Ajoutez ou supprimez un créneau',
 					'Select an option': 'Sélectionnez une option',
 					'Close': 'Fermer',
 					'Add to cart': 'ajouter au panier',
@@ -32,7 +32,10 @@ frappe.ready(function() {
 					'Buy units without selecting a slot': 'Acheter des unités sans sélectionner un créneau',
 					'No slot available': 'Aucun créneau disponible',
 					'Cart': 'Panier',
-					'Remove items: {0}': 'Supprimer les articles: {0}'
+					'Remove items: {0}': 'Supprimer les articles: {0}',
+					'an hour': 'd\'une heure',
+					'half a day': 'd\'une demi-journée',
+					'a day': 'd\'une journée'
 				}
 			}
 		}

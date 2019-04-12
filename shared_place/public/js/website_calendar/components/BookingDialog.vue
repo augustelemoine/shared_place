@@ -7,7 +7,7 @@
 				<h3 class="bookpage-resource">{{ resource.title }}</h3>
 			</div>
 			<div class="bookpage-section">
-				<span class="blue">{{ __("Add or remove a slot") }}</span>
+				<span class="blue">{{ __("Add or remove") }} {{ unit_display }}</span>
 				<div class="input-group number-spinner">
 					<span class="input-group-btn">
 						<button class="btn btn-default cart-btn" @click="removeQty">–</button>
@@ -61,6 +61,11 @@ export default {
 			selectedOption: {},
 			item: null,
 			qtyFactor: []
+		}
+	},
+	computed: {
+		unit_display: function() {
+			return this.uom == "hour" ? __("an hour") : (this.uom === "halfday" ? __("half a day") : __("a day"));
 		}
 	},
 	watch: {

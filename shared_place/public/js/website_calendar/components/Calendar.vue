@@ -8,6 +8,9 @@
 		</div>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
 		<booking-dialog :booked="booked" :uom="uom"/>
+		<div v-if="!this.isMobile()" class="text-center">
+			<div v-html="resource_description"></div>
+		</div>
 	</div>
 </template>
 
@@ -38,7 +41,8 @@
 				selectedResource: {},
 				selectableResources: [],
 				helpText: null,
-				route: null
+				route: null,
+				resource_description: null
 			}
 		},
 		created() {
@@ -63,6 +67,7 @@
 		},
 		computed: {
 			config() {
+				const me = this;
 				return {
 					locale: Vue.prototype.frappe.lang,
 					header: {
@@ -84,13 +89,17 @@
 							labelTds.css('background-color', '#d1d3fc');
 						}
 						labelTds.eq(0).find('.fc-cell-content').popover({
-								html: true,
-								title: resourceObj.id,
-								content: resourceObj.description,
-								trigger: 'hover',
-								placement: 'bottom',
-								container: 'body',
-							});
+							html: true,
+							title: resourceObj.id,
+							content: resourceObj.description,
+							trigger: 'hover',
+							placement: 'bottom',
+							container: 'body',
+						});
+						labelTds.eq(0).find('.fc-cell-content').hover(
+							function() { me.resource_description = resourceObj.web_description },
+							function() { me.resource_description = null },
+						)
 					},
 					events: (start, end, timezone, callback) => {
 						frappe.call({

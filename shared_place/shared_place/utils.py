@@ -106,7 +106,7 @@ def update_calendar_items_cart(item_code, qty, uom_name):
 	context = get_cart_quotation(quotation)
 
 	return {
-		'name': quotation.name,
+		'name': quotation.name if quotation else None,
 		'shopping_cart_menu': get_shopping_cart_menu(context)
 	}
 
@@ -147,6 +147,11 @@ def on_quotation_delete(doc, method):
 		bookings = frappe.get_all("Shared Place Booking", filters={"quotation": doc.name})
 		for booking in bookings:
 			frappe.delete_doc("Shared Place Booking", booking.name, ignore_permissions=True)
+
+def on_so_cancel(doc, method):
+	bookings = frappe.get_all("Shared Place Booking", filters={"sales_order": doc.name})
+	for booking in bookings:
+		frappe.db.set_value("Shared Place Booking", booking.name, "sales_order", None)
 
 def update_gcalendar_connector(doc, method):
 	if doc.python_module == "frappe.data_migration.doctype.data_migration_connector.connectors.calendar_connector":

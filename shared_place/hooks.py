@@ -94,6 +94,9 @@ doc_events = {
 	"Quotation": {
 		"on_trash": "shared_place.shared_place.utils.on_quotation_delete"
 	},
+	"Sales Order": {
+		"on_cancel": "shared_place.shared_place.utils.on_so_cancel"
+	},
 	"Data Migration Connector": {
 		"validate": "shared_place.shared_place.utils.update_gcalendar_connector"
 	}
