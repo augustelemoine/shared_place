@@ -178,7 +178,8 @@ def get_price(item_code, price_list, uom, customer_group, company, qty=1):
 				"company": company,
 				"conversion_rate": 1,
 				"for_shopping_cart": True,
-				"currency": frappe.db.get_value("Price List", price_list, "currency")
+				"currency": frappe.db.get_value("Price List", price_list, "currency"),
+				"conversion_factor": 1
 			}))
 
 			if pricing_rule:
