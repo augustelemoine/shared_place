@@ -1,3 +1,0 @@
-shared_place.shared_place
-shared_place.shared_place.shared_place_connector
-shared_place.shared_place.utils

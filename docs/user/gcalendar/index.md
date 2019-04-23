@@ -1,5 +1,4 @@
 <!-- add-breadcrumbs -->
-<!-- add-breadcrumbs -->
 # Intégration avec Google Calendrier
 
 Google Calendrier n'ayant pas de liens avec les salles/ressources/espaces de coworking configurés dans ERPNext, on ne peut pas avoir de synchronisation complète avec le calendrier d'ERPNext.

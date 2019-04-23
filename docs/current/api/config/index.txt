@@ -1,3 +1,0 @@
-shared_place.config.docs
-shared_place.config.desktop
-shared_place.config

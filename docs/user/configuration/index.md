@@ -1,5 +1,4 @@
 <!-- add-breadcrumbs -->
-<!-- add-breadcrumbs -->
 # Configuration
 
 Afin de pouvoir proposer des créneaux de réservation en ligne, il est nécessaire de configurer correctement les différentes salles/ressources disponibles ainsi que les données de facturation qui leur sont associées.
@@ -20,6 +19,7 @@ Les paramètres permettent de définir des valeurs par défaut applicables au ca
   Exemple: si celle-ci est de 14 jours, les utilisateurs ne pourront pas faire de réservations au delà de 14 jours après aujourd'hui. 
 -  
 - La possibilité d'autoriser ou non les réservations le week-end  
+- La possibilité d'autoriser ou non les achats d'unités via le panier classique d'ERPNext sans réservation de créneaux  
 - Une heure de début et une heure de fin du calendrier  
   Le calendrier ne permettra pas de voir les heures avant/après ces deux paramètres.  
 

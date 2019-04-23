@@ -1,3 +1,0 @@
-shared_place.__init__
-shared_place.hooks
-shared_place.tasks

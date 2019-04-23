@@ -3,7 +3,7 @@
 		<help-text :helpText="helpText"/>
 		<resource-selector v-if="this.isMobile()" :selectResource="selectResource" :resources="selectableResources" :selectedResource="selectedResource"/>
 		<uom-section v-if="showUOMSection()" :available_uoms="available_uoms" :uom="uom" :changeUom="uomChanged"/>
-		<div class="text-center">
+		<div class="text-center" v-if="unitPurchasing==='1'">
 			<a v-if="this.route!==null" :href="route">{{ __("Buy units without selecting a slot") }}</a>
 		</div>
 		<full-calendar v-if="showCalendar()" ref="calendar" :config="config" :events="events"/>
@@ -42,7 +42,8 @@
 				selectableResources: [],
 				helpText: null,
 				route: null,
-				resource_description: null
+				resource_description: null,
+				unitPurchasing: 0
 			}
 		},
 		created() {
@@ -207,6 +208,7 @@
 					method: 'shared_place.templates.pages.shared_place_calendar.get_settings',
 					callback: (r) => {
 						this.helpText = r.message.calendar_help_text;
+						this.unitPurchasing = r.message.allow_unit_purchasing;
 
 						if (cal) {
 							this.$refs.calendar.fireMethod('option', {

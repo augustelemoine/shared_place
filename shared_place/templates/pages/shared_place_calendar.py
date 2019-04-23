@@ -45,8 +45,12 @@ def get_rooms_and_resources(route=None):
 			else:
 				r["selected"] = 0
 
-			r["description"] = [d["description"] for d in all_items if d['name'] == r["item"]][0]
-			r["web_description"] = [d["web_long_description"] for d in all_items if d['name'] == r["item"]][0]
+			description = [d["description"] for d in all_items if d['name'] == r["item"]]
+			if description:
+				r["description"] = description[0]
+			web_description = [d["web_long_description"] for d in all_items if d['name'] == r["item"]]
+			if web_description:
+				r["web_description"] = web_description[0]
 
 	return result
 
@@ -68,7 +72,7 @@ def get_uoms():
 @frappe.whitelist(allow_guest=True)
 def get_settings():
 	settings = frappe.db.get_values("Shared Place Settings", None, ["calendar_start_time", "calendar_end_time", \
-		"minimum_booking_time", "week_end_bookings", "calendar_help_text"], as_dict=True)[0]
+		"minimum_booking_time", "week_end_bookings", "calendar_help_text", "allow_unit_purchasing"], as_dict=True)[0]
 	settings.update({"lang": frappe.local.lang})
 	return settings
 
