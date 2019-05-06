@@ -26,7 +26,7 @@ def get_rooms_and_resources(route=None):
 	if coworking:
 		for cow in coworking:
 			if cow['several_options']==1:
-				cow["options"] = frappe.get_all("Shared Place Booking Options", filters=[["parent", "in", cow['id']], ["parenttype", "=", "Shared Place Coworking Space"]], fields=["option", "item", "name"])
+				cow["options"] = frappe.get_all("Shared Place Booking Options", filters=[["parent", "=", cow['id']], ["parenttype", "=", "Shared Place Coworking Space"]], fields=["option", "item", "name"])
 		result.extend(coworking)
 	if rooms:
 		for room in rooms:
