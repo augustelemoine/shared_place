@@ -316,7 +316,14 @@ def get_slot_price(item_code, qty, uom, price_list=None):
 	uom = get_sp_uom(uom)
 
 	price = get_price(item_code, price_list, uom, settings.default_customer_group, settings.company, qty)
-	return fmt_money(float(price.price_list_rate) * float(qty), currency=price.currency)
+	if not price:
+		price = 0
+		currency = frappe.get_cached_value('Global Defaults', 'None', 'default_currency')
+	else:
+		currency = price.currency
+		price = price.price_list_rate
+
+	return fmt_money(float(price) * float(qty), currency=currency)
 
 @frappe.whitelist()
 def book_slot(doctype, resource, start, end, option=None):
